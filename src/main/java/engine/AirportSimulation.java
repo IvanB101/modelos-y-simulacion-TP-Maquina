@@ -106,7 +106,7 @@ public class AirportSimulation implements Engine {
         for (Server server : servers) {
             inQueueAircrafts += server.getQueue().size();
         }
-        // The -1 is to acount for the last arrival event, which isn't procceced
+        // The -1 is to acount for the last arrival event, which isn't processed
         int landings = Entity.getIdCount() - inQueueAircrafts - 1;
 
         DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");

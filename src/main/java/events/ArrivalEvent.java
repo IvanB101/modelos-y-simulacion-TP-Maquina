@@ -30,7 +30,7 @@ public class ArrivalEvent extends Event {
     @Override
     public void planificate(List<Server> servers, FutureEventList fel) {
         Server server = this.getSelectionPolicy().selectServer(servers);
-        
+
         if (server.isBusy()) {
             server.getQueue().enqueue(this.getEntity());
         } else {
