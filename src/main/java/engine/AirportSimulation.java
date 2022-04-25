@@ -122,29 +122,29 @@ public class AirportSimulation implements Engine {
 
         report += "Tiempo total de ocio:" + "\n";
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ":" + server.getIdleTime() + "\n";
+            report += "    Server " + server.getId() + ": " + server.getIdleTime() + "\n";
         }
 
         report += "Tiempo máximo de ocio: " + "\n";
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ":" + server.getMaxIdleTime() + "\n";
+            report += "    Server " + server.getId() + ": " + server.getMaxIdleTime() + "\n";
         }
 
         report += "Porcentaje de ocio respecto al total de tiempo:" + "\n";
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ":"
+            report += "    Server " + server.getId() + ": "
                     + dformat.format((server.getIdleTime()) / (double) this.getEndTime()) + "\n";
         }
 
         report += "Porcentaje del maximo de ocio respecto al tiempo total de ocio:" + "\n";
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ":"
+            report += "    Server " + server.getId() + ": "
                     + dformat.format((server.getMaxIdleTime()) / (double) server.getIdleTime()) + "\n";
         }
 
         report += "Tamaño máximo de la cola de espera: " + "\n";
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ":" + server.getQueue().getMaxSize() + "\n";
+            report += "    Server " + server.getId() + ": " + server.getQueue().getMaxSize() + "\n";
         }
     }
 
