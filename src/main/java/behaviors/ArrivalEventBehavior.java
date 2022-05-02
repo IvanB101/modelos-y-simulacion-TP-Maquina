@@ -1,7 +1,7 @@
 package behaviors;
 
 import events.Event;
-import entities.Aircraft;
+import entities.HeavyAircraft;
 import entities.Entity;
 import utils.Randomizer;
 import events.ArrivalEvent;
@@ -34,7 +34,6 @@ public class ArrivalEventBehavior extends EventBehavior {
         } else {
             clock = 20;
         }
-        return new ArrivalEvent(actualEvent.getClock() + clock, new Aircraft(entity.getAttendingServer()),
-                ((ArrivalEvent) actualEvent).getSelectionPolicy());
+        return new ArrivalEvent(actualEvent.getClock() + clock, new HeavyAircraft(entity.getAttendingServer()), ((ArrivalEvent) actualEvent).getSelectionPolicy());
     }
 }

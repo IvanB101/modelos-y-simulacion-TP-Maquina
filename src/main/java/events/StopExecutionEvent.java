@@ -3,15 +3,11 @@ package events;
 import java.util.List;
 import resources.Server;
 import engine.FutureEventList;
-import engine.AirportSimulation;
 
 public class StopExecutionEvent extends Event {
-    private AirportSimulation airportSimulation;
 
-    public StopExecutionEvent(int clock, AirportSimulation airportSimulation) {
+    public StopExecutionEvent(int clock) {
         super(clock, null, null);
-        this.airportSimulation = airportSimulation;
-        Event.END_TIME_DIGITS = ("" + this.airportSimulation.getEndTime()).length();
         this.setPriority(1);
     }
 

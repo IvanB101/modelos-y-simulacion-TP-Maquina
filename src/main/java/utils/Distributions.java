@@ -1,0 +1,41 @@
+package utils;
+
+public abstract class Distributions {
+    private static final int numNormal = 12;
+
+    public static double discreteEmpiric(int[] times, double[] accProbability, Randomizer randomizer) {
+        double random = randomizer.nextRandom();
+
+        for (int i = 0; i < accProbability.length; i++) {
+            if (random < accProbability[i]) {
+                return times[i];
+            }
+        }
+
+        return times[times.length - 1];
+    }
+
+    public static double uniform(int a, int b, Randomizer randomizer) {
+        double random = randomizer.nextRandom();
+
+        return a + (b - a) * random;
+    }
+
+    public static double exponencial(int lambda, Randomizer randomizer) {
+        double random = randomizer.nextRandom();
+
+        return (1 / (double) lambda) * (Math.log(1 - random));
+    }
+
+    public static double normal(int average, double variance, Randomizer randomizer) {
+        double n = 0.0;
+
+        //Generation of normal variable
+        for (int i = 0; i < numNormal; i++) {
+            n += randomizer.nextRandom();
+        }
+        n = (n - numNormal / 2) / (numNormal / 12);
+
+        return n * variance + average;
+    }
+}
