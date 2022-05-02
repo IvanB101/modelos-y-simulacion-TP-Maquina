@@ -31,7 +31,7 @@ public class ArrivalEvent extends Event {
     public void planificate(List<Server> servers, FutureEventList fel) {
         Server server = this.getSelectionPolicy().selectServer(servers);
         this.getEntity().setEvent(this);
-        
+
         if (server.isBusy()) {
             server.getQueue().enqueue(this.getEntity());
         } else {
