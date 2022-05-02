@@ -10,10 +10,11 @@ public class App {
     //private static int SERVERS_NUMBER;
 
     public static void main(String[] args) {
-        Engine engine = new AirportSimulation(1, EXECUTION_TIME, OneServerModelPolicy.getInstance());
+        //Last parameter is an optional seed, if it is 0 then it uses the PC clock
+        Engine engine = new AirportSimulation(1, EXECUTION_TIME, OneServerModelPolicy.getInstance(), 0);
         engine.execute();
         engine.generateReport();
         engine.showReport();
-        engine.saveReport();
+        //engine.saveReport();
     }
 }

@@ -30,13 +30,15 @@ public class ArrivalEvent extends Event {
     @Override
     public void planificate(List<Server> servers, FutureEventList fel) {
         Server server = this.getSelectionPolicy().selectServer(servers);
-
+        this.getEntity().setEvent(this);
+        
         if (server.isBusy()) {
             server.getQueue().enqueue(this.getEntity());
         } else {
             server.setServedEntity(this.getEntity());
             server.setBusy(true);
             fel.insert(this.endOfServiceEventBehavior.nextEvent(this, this.getEntity()));
+            server.setIdleTimeFinishMark(this.getClock());
         }
         fel.insert(this.getEventBehavior().nextEvent(this, this.getEntity()));
     }

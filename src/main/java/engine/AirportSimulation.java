@@ -1,6 +1,6 @@
 package engine;
 
-import entities.Aircraft;
+import entities.HeavyAircraft;
 import java.util.List;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import entities.Entity;
 import resources.Server;
-import resources.Airstrip;
+import utils.CustomRandomizer;
+import resources.HeavyAirstrip;
 import events.ArrivalEvent;
-import events.EndOfServiceEvent;
 import events.Event;
 import resources.CustomQueue;
 import events.StopExecutionEvent;
@@ -39,64 +39,30 @@ public class AirportSimulation implements Engine {
      * @param policy           The object that defines the airstrip selection policy
      *                         each time an arrival occurs.
      */
-    public AirportSimulation(int airstripQuantity, int endTime, ServerSelectionPolicy policy) {
+    public AirportSimulation(int airstripQuantity, int endTime, ServerSelectionPolicy policy, long seed) {
+        // Option for simulation with a especific seed
+        if (seed != 0) {
+            CustomRandomizer.setSeed(seed);
+        }
+
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();
         for (int i = 0; i < airstripQuantity; i++) {
             Queue queue = new CustomQueue();
-            this.servers.add(new Airstrip(queue));
+            this.servers.add(new HeavyAirstrip(queue));
             queue.setAssignedServer(servers.get(i));
         }
-        this.fel.insert(new ArrivalEvent(0, new Aircraft(policy.selectServer(servers)), policy));
-    }
-
-    // This is to avoid null pointer exception in the constructor
-    public void iniciatilize() {
-        this.fel.insert(new StopExecutionEvent(endTime, this));
+        this.fel.insert(new StopExecutionEvent(endTime));
+        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(policy.selectServer(servers)), policy));
     }
 
     @Override
     public void execute() {
-        this.iniciatilize();
         Event event;
 
         while (!((event = fel.getImminent()) instanceof StopExecutionEvent)) {
-            Entity entity = event.getEntity();
-            entity.setEvent(event);
-            Server server = entity.getAttendingServer();
             event.planificate(servers, fel);
-
-            if (event instanceof ArrivalEvent) {
-                if (server.isBusy() && server.getQueue().isEmpty()) {
-                    server.setIdleTimeFinishMark(event.getClock());
-                }
-            } else if (event instanceof EndOfServiceEvent) {
-                if (!server.isBusy()) {
-                    server.setIdleTimeStartMark(event.getClock());
-                }
-
-                int wait = entity.getEndOfServiceEvent().getClock() - entity.getArrivalEvent().getClock()
-                        - entity.getTransitTime();
-
-                int transit = entity.getEndOfServiceEvent().getClock() - entity.getArrivalEvent().getClock();
-
-                entity.setTransitTime(transit);
-
-                entity.setWaitingTime(wait);
-
-                if (Entity.getMaxTransitTime() < transit) {
-                    Entity.setMaxTransitTime(transit);
-                }
-
-                if (Entity.getMaxWaitingTime() < wait) {
-                    Entity.setMaxWaitingTime(wait);
-                }
-
-                Entity.accumulateTransitTime(transit);
-
-                Entity.accumulateWaitingTime(wait);
-            }
         }
     }
 
@@ -106,7 +72,6 @@ public class AirportSimulation implements Engine {
         for (Server server : servers) {
             inQueueAircrafts += server.getQueue().size();
         }
-        // The -1 is to acount for the last arrival event, which isn't processed
         int landings = Entity.getIdCount() - inQueueAircrafts - 1;
 
         DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
@@ -146,6 +111,8 @@ public class AirportSimulation implements Engine {
         for (Server server : servers) {
             report += "    Server " + server.getId() + ": " + server.getQueue().getMaxSize() + "\n";
         }
+
+        report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
     }
 
     @Override
@@ -159,9 +126,7 @@ public class AirportSimulation implements Engine {
             writer.write(report);
             writer.close();
         } catch (Exception exception) {
-            System.out.println("Error when trying to write the report into a file.");
-            System.out.println("Showing on screen...");
-            System.out.println(report);
+            System.err.println(exception);
         }
     }
 
