@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Comparator;
 import events.Event;
 import resources.Server;
+import utils.Randomizer;
 import events.ArrivalEvent;
 import events.EndOfServiceEvent;
 import java.util.LinkedList;
@@ -14,6 +15,7 @@ public abstract class Entity {
     private static int maxWaitingTime = 0;
     private static int totalTransitTime = 0;
     private static int maxTransitTime = 0;
+    private Randomizer randomizer;
 
     // attributes
     private int id;
@@ -39,6 +41,7 @@ public abstract class Entity {
         this.attendingServer = server;
         this.events = new LinkedList<Event>();
     }
+    public abstract void affectAirstrip();
 
     public static void setMaxWaitingTime(int maxWaitingTime) {
         Entity.maxWaitingTime = maxWaitingTime;
@@ -119,5 +122,8 @@ public abstract class Entity {
     public void setEvent(Event event) {
         events.add(event);
         events.sort(comparator);
+    } 
+    public Randomizer getRandomizer() {
+        return randomizer;
     }
 }

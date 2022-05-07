@@ -30,4 +30,9 @@ public class MidAirstrip extends Server {
         return "Airstrip " + this.getId() + " -- busy? : " + this.isBusy() + " -- attending: " + this.getServedEntity()
                 + " >> mid weight Airstrip";
     }
+
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
+    }
 }

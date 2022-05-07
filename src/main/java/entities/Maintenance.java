@@ -22,4 +22,9 @@ public class Maintenance extends Entity {
     public int getTypeId() {
         return typeId;
     }
+
+    @Override
+    public void affectAirstrip(){
+        this.getAttendingServer().addDurability((int)(this.getAttendingServer().getMaxDurability()*0.15));
+    }
 }
