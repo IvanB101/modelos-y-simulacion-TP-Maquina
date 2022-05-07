@@ -5,7 +5,6 @@ import resources.Server;
 import entities.Entity;
 import engine.FutureEventList;
 import policies.ServerSelectionPolicy;
-import behaviors.ArrivalEventBehavior;
 import behaviors.EndOfServiceEventBehavior;
 
 public class ArrivalEvent extends Event {

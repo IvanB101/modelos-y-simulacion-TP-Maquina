@@ -8,6 +8,7 @@ public abstract class Server {
     // attributes
     private int id;
     private boolean busy;
+    private boolean maintenance;
     /**
      * init with 0 to avoid desynchronized in the firt arrival event.
      */
@@ -27,10 +28,19 @@ public abstract class Server {
         idCount++;
         this.id = idCount;
         this.busy = false;
+        this.setMaintenance(false);
         this.idleTime = 0;
         this.servedEntity = null;
         this.queue = queue;
     }
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
+    public abstract void addDurability(int durability);
+    public abstract int getMaxDurability();
 
     public int getId() {
         return this.id;

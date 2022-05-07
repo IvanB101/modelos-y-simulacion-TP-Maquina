@@ -26,4 +26,9 @@ public class LightAirstrip extends Server {
         return "Airstrip " + this.getId() + " -- busy? : " + this.isBusy() + " -- attending: " + this.getServedEntity()
                 + " >> light Airstrip";
     }
+
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
+    }
 }

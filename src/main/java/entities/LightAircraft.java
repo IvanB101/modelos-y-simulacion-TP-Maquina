@@ -1,6 +1,7 @@
 package entities;
 
 import resources.Server;
+import utils.Distributions;
 
 public class LightAircraft extends Entity {
     private static int idCount = 0;
@@ -8,6 +9,7 @@ public class LightAircraft extends Entity {
     private static int maxWaitingTime = 0;
     private static int totalTransitTime = 0;
     private static int maxTransitTime = 0;
+    private final int[]valuesLight= {0,-1};
 
     private int typeId;
 
@@ -60,5 +62,9 @@ public class LightAircraft extends Entity {
 
     public int getTypeId() {
         return typeId;
+    }
+    @Override
+    public void affectAirstrip(){
+        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesLight[0],valuesLight[1],super.getRandomizer()));
     }
 }

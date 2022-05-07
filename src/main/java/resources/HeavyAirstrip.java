@@ -9,10 +9,7 @@ public class HeavyAirstrip extends Server {
         this.durability = maxDurability;
     }
 
-    public int getDurability() {
-        return durability;
-    }
-
+    @Override
     public void addDurability(int durability) {
         this.durability = (this.durability + durability) % maxDurability;
     }
@@ -20,5 +17,10 @@ public class HeavyAirstrip extends Server {
     public String toString() {
         return "Airstrip " + this.getId() + " -- busy? : " + this.isBusy() + " -- attending: " + this.getServedEntity()
                 + " >> heavy Airstrip";
+    }
+
+    @Override
+    public int getMaxDurability() {
+        return maxDurability;
     }
 }

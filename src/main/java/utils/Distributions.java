@@ -3,16 +3,16 @@ package utils;
 public abstract class Distributions {
     private static final int numNormal = 12;
 
-    public static double discreteEmpiric(int[] times, double[] accProbability, Randomizer randomizer) {
+    public static int discreteEmpiric(int[] values, double[] accProbability, Randomizer randomizer) {
         double random = randomizer.nextRandom();
 
         for (int i = 0; i < accProbability.length; i++) {
-            if (random < accProbability[i]) {
-                return times[i];
+            if (random <= accProbability[i]) {
+                return values[i];
             }
         }
 
-        return times[times.length - 1];
+        return values[values.length - 1];
     }
 
     public static double uniform(int a, int b, Randomizer randomizer) {
