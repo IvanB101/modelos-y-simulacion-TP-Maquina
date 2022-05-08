@@ -5,6 +5,7 @@ import resources.Server;
 import entities.Entity;
 import engine.FutureEventList;
 import policies.ServerSelectionPolicy;
+import behaviors.ArrivalEventBehavior;
 import behaviors.EndOfServiceEventBehavior;
 
 public class ArrivalEvent extends Event {
@@ -36,10 +37,11 @@ public class ArrivalEvent extends Event {
         } else {
             server.setServedEntity(this.getEntity());
             server.setBusy(true);
-            fel.insert(this.endOfServiceEventBehavior.nextEvent(this, this.getEntity()));
+            fel.insert(this.endOfServiceEventBehavior.nextEvent(this, this.getEntity(), null));
             server.setIdleTimeFinishMark(this.getClock());
         }
-        fel.insert(this.getEventBehavior().nextEvent(this, this.getEntity()));
+
+        fel.insert(this.getEventBehavior().nextEvent(this, this.getEntity(), server));
     }
 
     @Override

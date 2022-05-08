@@ -1,18 +1,11 @@
 package behaviors;
 
 import events.Event;
+import resources.Server;
 import entities.Entity;
-import utils.Randomizer;
 
 public abstract class EventBehavior {
-    private Randomizer randomizer;
-
-    public EventBehavior(Randomizer randomizer) {
-        this.randomizer = randomizer;
-    }
-
-    public Randomizer getRandomizer() {
-        return randomizer;
+    public EventBehavior() {
     }
 
     /**
@@ -22,5 +15,5 @@ public abstract class EventBehavior {
      * @param entity      The corresponding entity for the next event.
      * @return The next event.
      */
-    public abstract Event nextEvent(Event actualEvent, Entity entity);
+    public abstract Event nextEvent(Event actualEvent, Entity entity, Server server);
 }

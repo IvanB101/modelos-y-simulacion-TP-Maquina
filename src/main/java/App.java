@@ -1,7 +1,6 @@
 import engine.AirportSimulation;
 import engine.Engine;
 import policies.MultipleServerModelPolicy;
-import policies.OneServerModelPolicy;
 
 public class App {
     private static final int MIN_PER_DAY = 1440;

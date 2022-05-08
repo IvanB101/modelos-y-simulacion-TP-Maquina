@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package resources;
 
-/**
- *
- * @author Usuario
- */
 public class MidAirstrip extends Server {
     private static final int maxDurability = 3000;
     private int durability;

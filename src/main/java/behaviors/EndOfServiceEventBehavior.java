@@ -1,6 +1,7 @@
 package behaviors;
 
 import events.Event;
+import resources.Server;
 import entities.Entity;
 import entities.HeavyAircraft;
 import entities.LightAircraft;
@@ -20,7 +21,7 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     private final int[]valuesMaintenance= {12*60,24*60};
 
     private EndOfServiceEventBehavior(Randomizer randomizer) {
-        super(randomizer);
+        super();
     }
 
     public static EndOfServiceEventBehavior getInstance() {
@@ -32,24 +33,19 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     }
 
     @Override
-    public Event nextEvent(Event actualEvent, Entity entity) {
+    public Event nextEvent(Event actualEvent, Entity entity, Server server) {
         int clock;
 
-        double random = this.getRandomizer().nextRandom();
-
         if (entity instanceof HeavyAircraft){
-            clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy, super.getRandomizer());
+            clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
         } else if (entity instanceof MidAircraft) {
-            clock =(int)Distributions.uniform(valuesMid[0],valuesMid[1], super.getRandomizer());
+            clock =(int)Distributions.uniform(valuesMid[0],valuesMid[1]);
         } else if (entity instanceof LightAircraft) {
-            clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight, super.getRandomizer());
+            clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            clock =(int)Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1], super.getRandomizer());
+            clock =(int)Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
         }
-        //TODO
-        Event event = new EndOfServiceEvent(actualEvent.getClock() + clock, entity);
-        entity.setTransitTime(clock);
 
-        return event;
+        return new EndOfServiceEvent(actualEvent.getClock() + clock, entity);
     }
 }

@@ -2,21 +2,18 @@ package entities;
 
 import resources.Server;
 import utils.Distributions;
+import utils.Statistics;
 
 public class HeavyAircraft extends Entity {
-    private static int idCount = 0;
-    private static int totalWaitingTime = 0;
-    private static int maxWaitingTime = 0;
-    private static int totalTransitTime = 0;
-    private static int maxTransitTime = 0;
-    private final int[]valuesHeavy= {-3,-6};
+    private static final int classEntityId = 3;
+    private static final int[] valuesHeavy = { -3, -6 };
 
     private int typeId;
 
     public HeavyAircraft(Server server) {
         super(server);
-        idCount++;
-        this.typeId = idCount;
+        Statistics.addIdCount(classEntityId);
+        this.typeId = Statistics.getIdCount(classEntityId);
     }
 
     @Override
@@ -24,48 +21,17 @@ public class HeavyAircraft extends Entity {
         return "id = " + this.getId() + " Type id: " + this.getTypeId() + " >> heavy aircraft";
     }
 
-    public static int getIdCount() {
-        return idCount;
+    @Override
+    public int getClassEntityId() {
+        return classEntityId;
     }
 
-    public static int getTotalWaitingTime() {
-        return totalWaitingTime;
-    }
-
-    public static void accumulateWaitingTime(int WaitingTime) {
-        HeavyAircraft.totalWaitingTime += WaitingTime;
-    }
-
-    public static int getMaxWaitingTime() {
-        return maxWaitingTime;
-    }
-
-    public static void setMaxWaitingTime(int maxWaitingTime) {
-        HeavyAircraft.maxWaitingTime = maxWaitingTime;
-    }
-
-    public static int getTotalTransitTime() {
-        return totalTransitTime;
-    }
-
-    public static void accumulateTransitTime(int TransitTime) {
-        HeavyAircraft.totalTransitTime += TransitTime;
-    }
-
-    public static int getMaxTransitTime() {
-        return maxTransitTime;
-    }
-
-    public static void setMaxTransitTime(int maxTransitTime) {
-        HeavyAircraft.maxTransitTime = maxTransitTime;
+    @Override
+    public void affectAirstrip() {
+        this.getAttendingServer().addDurability((int) Distributions.uniform(valuesHeavy[0], valuesHeavy[1]));
     }
 
     public int getTypeId() {
         return typeId;
-    }
-
-    @Override
-    public void affectAirstrip(){
-        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesHeavy[0],valuesHeavy[1],super.getRandomizer()));
     }
 }

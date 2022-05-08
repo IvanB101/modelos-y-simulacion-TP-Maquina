@@ -2,21 +2,18 @@ package entities;
 
 import resources.Server;
 import utils.Distributions;
+import utils.Statistics;
 
 public class MidAircraft extends Entity {
-    private static int idCount = 0;
-    private static int totalWaitingTime = 0;
-    private static int maxWaitingTime = 0;
-    private static int totalTransitTime = 0;
-    private static int maxTransitTime = 0;
-    private final int[]valuesMid= {-1,-4};
+    private static final int classEntityId = 2;
+    private static final int[]valuesMid= {-1,-4};
 
     private int typeId;
 
     public MidAircraft(Server server) {
         super(server);
-        idCount++;
-        this.typeId = idCount;
+        Statistics.addIdCount(classEntityId);
+        this.typeId = Statistics.getIdCount(classEntityId);
     }
 
     @Override
@@ -24,40 +21,9 @@ public class MidAircraft extends Entity {
         return "id = " + this.getId() + " Type id: " + this.getTypeId() + " >> mid weight aircraft";
     }
 
-    public static int getIdCount() {
-        return idCount;
-    }
-
-    public static int getTotalWaitingTime() {
-        return totalWaitingTime;
-    }
-
-    public static void accumulateWaitingTime(int WaitingTime) {
-        MidAircraft.totalWaitingTime += WaitingTime;
-    }
-
-    public static int getMaxWaitingTime() {
-        return maxWaitingTime;
-    }
-
-    public static void setMaxWaitingTime(int maxWaitingTime) {
-        MidAircraft.maxWaitingTime = maxWaitingTime;
-    }
-
-    public static int getTotalTransitTime() {
-        return totalTransitTime;
-    }
-
-    public static void accumulateTransitTime(int TransitTime) {
-        MidAircraft.totalTransitTime += TransitTime;
-    }
-
-    public static int getMaxTransitTime() {
-        return maxTransitTime;
-    }
-
-    public static void setMaxTransitTime(int maxTransitTime) {
-        MidAircraft.maxTransitTime = maxTransitTime;
+    @Override
+    public int getClassEntityId() {
+        return classEntityId;
     }
 
     public int getTypeId() {
@@ -66,6 +32,6 @@ public class MidAircraft extends Entity {
 
     @Override
     public void affectAirstrip(){
-        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesMid[0],valuesMid[1],super.getRandomizer()));
+        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesMid[0],valuesMid[1]));
     }
 }

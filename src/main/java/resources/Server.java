@@ -3,7 +3,7 @@ package resources;
 import entities.Entity;
 
 public abstract class Server {
-    private static int idCount=0;
+    private static int idCount = 0;
 
     // attributes
     private int id;
@@ -33,13 +33,17 @@ public abstract class Server {
         this.servedEntity = null;
         this.queue = queue;
     }
+
     public boolean isMaintenance() {
         return maintenance;
     }
+
     public void setMaintenance(boolean maintenance) {
         this.maintenance = maintenance;
     }
+
     public abstract void addDurability(int durability);
+
     public abstract int getMaxDurability();
 
     public int getId() {

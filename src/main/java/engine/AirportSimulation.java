@@ -39,6 +39,7 @@ public class AirportSimulation implements Engine {
      * @param policy           The object that defines the airstrip selection policy
      *                         each time an arrival occurs.
      */
+    //TODO
     public AirportSimulation(int airstripQuantity, int endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
@@ -66,6 +67,7 @@ public class AirportSimulation implements Engine {
         }
     }
 
+    //TODO
     @Override
     public void generateReport() {
         int inQueueAircrafts = 0;

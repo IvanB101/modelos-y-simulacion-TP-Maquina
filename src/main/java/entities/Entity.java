@@ -4,23 +4,17 @@ import java.util.List;
 import java.util.Comparator;
 import events.Event;
 import resources.Server;
-import utils.Randomizer;
+import utils.Statistics;
 import events.ArrivalEvent;
 import events.EndOfServiceEvent;
 import java.util.LinkedList;
 
 public abstract class Entity {
-    private static int idCount = 0;
-    private static int totalWaitingTime = 0;
-    private static int maxWaitingTime = 0;
-    private static int totalTransitTime = 0;
-    private static int maxTransitTime = 0;
-    private Randomizer randomizer;
+    private static final int classEntityId = 0;
 
     // attributes
     private int id;
     private int waitingTime;
-    // Temporarily used to save service duration
     private int transitTime;
 
     // associations
@@ -34,49 +28,18 @@ public abstract class Entity {
     private Comparator<Event> comparator = Event.getComparator();
 
     public Entity(Server server) {
-        idCount++;
-        this.id = idCount;
+        Statistics.addIdCount(classEntityId);
+        this.id = Statistics.getIdCount(classEntityId);
         this.waitingTime = 0;
         this.transitTime = 0;
         this.attendingServer = server;
         this.events = new LinkedList<Event>();
     }
+
     public abstract void affectAirstrip();
 
-    public static void setMaxWaitingTime(int maxWaitingTime) {
-        Entity.maxWaitingTime = maxWaitingTime;
-    }
-
-    public static void setMaxTransitTime(int maxTransitTime) {
-        Entity.maxTransitTime = maxTransitTime;
-    }
-
-    public static void accumulateTransitTime(int transitTime) {
-        Entity.totalTransitTime += transitTime;
-    }
-
-    public static void accumulateWaitingTime(int waitingTime) {
-        Entity.totalWaitingTime += waitingTime;
-    }
-
-    public static int getTotalWaitingTime() {
-        return totalWaitingTime;
-    }
-
-    public static int getIdCount() {
-        return idCount;
-    }
-
-    public static int getMaxWaitingTime() {
-        return maxWaitingTime;
-    }
-
-    public static int getTotalTransitTime() {
-        return totalTransitTime;
-    }
-
-    public static int getMaxTransitTime() {
-        return maxTransitTime;
+    public int getClassEntityId() {
+        return classEntityId;
     }
 
     public int getId() {
@@ -122,8 +85,5 @@ public abstract class Entity {
     public void setEvent(Event event) {
         events.add(event);
         events.sort(comparator);
-    } 
-    public Randomizer getRandomizer() {
-        return randomizer;
     }
 }
