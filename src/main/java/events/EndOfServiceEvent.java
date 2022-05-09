@@ -45,5 +45,8 @@ public class EndOfServiceEvent extends Event {
             server.setBusy(false);
             server.setIdleTimeStartMark(this.getClock());
         }
+
+        if (entity.getClassEntityId() == 4)
+            server.setMaintenance(false);
     }
 }

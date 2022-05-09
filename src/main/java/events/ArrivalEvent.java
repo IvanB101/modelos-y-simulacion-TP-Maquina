@@ -40,6 +40,8 @@ public class ArrivalEvent extends Event {
             fel.insert(this.endOfServiceEventBehavior.nextEvent(this, this.getEntity(), null));
             server.setIdleTimeFinishMark(this.getClock());
         }
+        if (this.getEntity().getClassEntityId() == 4)
+            server.setMaintenance(true);
 
         fel.insert(this.getEventBehavior().nextEvent(this, this.getEntity(), server));
     }

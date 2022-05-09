@@ -46,6 +46,7 @@ public class EndOfServiceEventBehavior extends EventBehavior {
             clock =(int)Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
         }
 
+        // todo efecto
         return new EndOfServiceEvent(actualEvent.getClock() + clock, entity);
     }
 }

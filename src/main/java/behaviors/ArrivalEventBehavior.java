@@ -45,18 +45,22 @@ public class ArrivalEventBehavior extends EventBehavior {
             index = 1;
         }
 
-        if(entity instanceof HeavyAircraft) {
-            clock = (int) (Distributions.normal(averageHeavy[index], desviationHeavy));
-            nextEntity = new HeavyAircraft(server);
-        } else if (entity instanceof MidAircraft) {
-            clock = (int) (Distributions.exponencial(lambdaLight[index]));
-            nextEntity = new MidAircraft(server);
-        } else if (entity instanceof LightAircraft) {
-            clock = (int) (Distributions.exponencial(lambdaMid[index]));
-            nextEntity = new LightAircraft(server);
-        } else {
-            clock = (int) (Distributions.normal(averageMaintenance, desviationMaintenance));
-            nextEntity = new Maintenance(server);
+        switch(entity.getClassEntityId()) {
+            case 1:
+                clock = (int) (Distributions.exponencial(lambdaMid[index]));
+                nextEntity = new LightAircraft(server);
+                break;
+            case 2:
+                clock = (int) (Distributions.exponencial(lambdaLight[index]));
+                nextEntity = new MidAircraft(server);
+                break;
+            case 3:
+                clock = (int) (Distributions.normal(averageHeavy[index], desviationHeavy));
+                nextEntity = new HeavyAircraft(server);
+                break;
+            default:
+                clock = (int) (Distributions.normal(averageMaintenance, desviationMaintenance));
+                nextEntity = new Maintenance(server);
         }
 
         return new ArrivalEvent(clock, nextEntity, ((ArrivalEvent)actualEvent).getSelectionPolicy());
