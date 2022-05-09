@@ -12,7 +12,7 @@ public class ArrivalEvent extends Event {
     private ServerSelectionPolicy selectionPolicy;
     private EndOfServiceEventBehavior endOfServiceEventBehavior;
 
-    public ArrivalEvent(int clock, Entity entity, ServerSelectionPolicy policy) {
+    public ArrivalEvent(double clock, Entity entity, ServerSelectionPolicy policy) {
         super(clock, entity, ArrivalEventBehavior.getInstance());
         this.selectionPolicy = policy;
         this.setPriority(2);
@@ -28,8 +28,8 @@ public class ArrivalEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server> servers, FutureEventList fel) {
-        Server server = this.getSelectionPolicy().selectServer(servers);
+    public void planificate(List<Server>[]servers, FutureEventList fel) {
+        Server server = this.getSelectionPolicy().selectServer(servers, this.getEntity().getClassEntityId());
         this.getEntity().setEvent(this);
 
         if (server.isBusy()) {

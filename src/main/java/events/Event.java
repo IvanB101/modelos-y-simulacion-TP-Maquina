@@ -9,7 +9,7 @@ import behaviors.EventBehavior;
 
 public abstract class Event {
     // attributes
-    private int clock;
+    private double clock;
 
     private int priority;
 
@@ -41,7 +41,7 @@ public abstract class Event {
      */
     protected static int END_TIME_DIGITS;
 
-    public Event(int clock, Entity entity, EventBehavior eventBehavior) {
+    public Event(double clock, Entity entity, EventBehavior eventBehavior) {
         this.clock = clock;
         this.entity = entity;
         this.eventBehavior = eventBehavior;
@@ -54,9 +54,9 @@ public abstract class Event {
      * @param servers The list of servers needed to do the planification.
      * @param fel     The future event list to insert the next events.
      */
-    public abstract void planificate(List<Server> servers, FutureEventList fel);
+    public abstract void planificate(List<Server>[]servers, FutureEventList fel);
 
-    public int getClock() {
+    public double getClock() {
         return clock;
     }
 

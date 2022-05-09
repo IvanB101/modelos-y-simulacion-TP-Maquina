@@ -1,6 +1,10 @@
 package engine;
 
 import entities.HeavyAircraft;
+import entities.LightAircraft;
+import entities.Maintenance;
+import entities.MidAircraft;
+
 import java.util.List;
 import java.io.FileWriter;
 import java.text.DecimalFormat;
@@ -11,7 +15,10 @@ import java.io.BufferedWriter;
 import entities.Entity;
 import resources.Server;
 import utils.CustomRandomizer;
+import utils.Distributions;
 import resources.HeavyAirstrip;
+import resources.LightAirstrip;
+import resources.MidAirstrip;
 import events.ArrivalEvent;
 import events.Event;
 import resources.CustomQueue;
@@ -26,9 +33,9 @@ public class AirportSimulation implements Engine {
     private String report = "==============================================================================================\n"
             + "                                        R E P O R T                                           \n" +
             "==============================================================================================\n\n";
-    private int endTime;
+    private double endTime;
     private FutureEventList fel;
-    private List<Server> servers;
+    private List<Server>[]servers;
 
     /**
      * Creates the execution engine for the airport simulator.
@@ -40,7 +47,7 @@ public class AirportSimulation implements Engine {
      *                         each time an arrival occurs.
      */
     //TODO
-    public AirportSimulation(int airstripQuantity, int endTime, ServerSelectionPolicy policy, long seed) {
+    public AirportSimulation(int airstripQuantity, double endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
@@ -48,14 +55,36 @@ public class AirportSimulation implements Engine {
 
         this.endTime = endTime;
         this.fel = new FutureEventList();
-        this.servers = new ArrayList<Server>();
-        for (int i = 0; i < airstripQuantity; i++) {
-            Queue queue = new CustomQueue();
-            this.servers.add(new HeavyAirstrip(queue));
-            queue.setAssignedServer(servers.get(i));
+        this.servers = new List[3];
+
+        for (int i = 0; i < servers.length; i++) {
+            servers[i] = new ArrayList<Server>();
         }
+
+        for (int i = 0; i < 3; i++) {
+            Queue queue = new CustomQueue();
+            this.servers[0].add(new LightAirstrip(queue));
+            queue.setAssignedServer(servers[0].get(i));
+        }
+
+        for (int i = 3; i < 7; i++) {
+            Queue queue = new CustomQueue();
+            this.servers[1].add(new MidAirstrip(queue));
+            queue.setAssignedServer(servers[1].get(i));
+        }
+
+        for (int i = 7; i < 9; i++) {
+            Queue queue = new CustomQueue();
+            this.servers[2].add(new HeavyAirstrip(queue));
+            queue.setAssignedServer(servers[2].get(i));
+        }
+
         this.fel.insert(new StopExecutionEvent(endTime));
-        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(policy.selectServer(servers)), policy));
+        this.fel.insert(new ArrivalEvent(0, new LightAircraft(policy.selectServer(servers, 1)), policy));
+        this.fel.insert(new ArrivalEvent(0, new MidAircraft(policy.selectServer(servers, 2)), policy));
+        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(policy.selectServer(servers, 3)), policy));
+        this.fel.insert(new ArrivalEvent(5*1440, new Maintenance(policy.selectServer(servers, 1)), policy));
+
     }
 
     @Override
@@ -68,11 +97,15 @@ public class AirportSimulation implements Engine {
     }
 
     //TODO
+    /*
     @Override
     public void generateReport() {
         int inQueueAircrafts = 0;
-        for (Server server : servers) {
-            inQueueAircrafts += server.getQueue().size();
+
+        for (int i= 0; i<9; i++){
+            for (Server server : servers[i]) {
+                inQueueAircrafts += server.getQueue().size();
+            }
         }
         int landings = Entity.getIdCount() - inQueueAircrafts - 1;
 
@@ -117,6 +150,8 @@ public class AirportSimulation implements Engine {
         report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
     }
 
+    */
+    
     @Override
     public void saveReport() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SS");
@@ -137,11 +172,16 @@ public class AirportSimulation implements Engine {
         System.out.println(report);
     }
 
-    public int getEndTime() {
+    public double getEndTime() {
         return endTime;
     }
 
-    public List<Server> getServers() {
+    public List<Server>[] getServers() {
         return this.servers;
+    }
+
+    @Override
+    public void generateReport() {
+        // TODO borrar
     }
 }

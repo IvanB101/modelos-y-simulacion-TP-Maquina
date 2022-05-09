@@ -34,16 +34,16 @@ public class EndOfServiceEventBehavior extends EventBehavior {
 
     @Override
     public Event nextEvent(Event actualEvent, Entity entity, Server server) {
-        int clock;
+        double clock;
 
         if (entity instanceof HeavyAircraft){
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
         } else if (entity instanceof MidAircraft) {
-            clock =(int)Distributions.uniform(valuesMid[0],valuesMid[1]);
+            clock =Distributions.uniform(valuesMid[0],valuesMid[1]);
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            clock =(int)Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
+            clock =Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
         }
 
         // todo efecto

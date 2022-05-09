@@ -32,6 +32,6 @@ public class MidAircraft extends Entity {
 
     @Override
     public void affectAirstrip(){
-        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesMid[0],valuesMid[1]));
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesMid[0],valuesMid[1]));
     }
 }

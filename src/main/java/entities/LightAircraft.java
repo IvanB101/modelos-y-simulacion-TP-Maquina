@@ -31,6 +31,6 @@ public class LightAircraft extends Entity {
     }
     @Override
     public void affectAirstrip(){
-        this.getAttendingServer().addDurability((int)Distributions.uniform(valuesLight[0],valuesLight[1]));
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesLight[0],valuesLight[1]));
     }
 }
