@@ -6,7 +6,7 @@ import engine.FutureEventList;
 
 public class StopExecutionEvent extends Event {
 
-    public StopExecutionEvent(int clock) {
+    public StopExecutionEvent(double clock) {
         super(clock, null, null);
         this.setPriority(1);
     }
@@ -17,6 +17,6 @@ public class StopExecutionEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server> servers, FutureEventList fel) {
+    public void planificate(List<Server>[]servers, FutureEventList fel) {
     }
 }

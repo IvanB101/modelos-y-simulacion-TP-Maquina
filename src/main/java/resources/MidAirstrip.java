@@ -2,18 +2,23 @@ package resources;
 
 public class MidAirstrip extends Server {
     private static final int maxDurability = 3000;
-    private int durability;
+    private static final int classServerId = 2;
+    private double durability;
 
     public MidAirstrip(Queue queue) {
         super(queue);
         this.durability = maxDurability;
     }
 
-    public int getDurability() {
+    public int getClassserverid() {
+        return classServerId;
+    }
+
+    public double getDurability(){
         return durability;
     }
 
-    public void addDurability(int durability) {
+    public void addDurability(double durability) {
         this.durability = (this.durability + durability) % maxDurability;
     }
 

@@ -8,7 +8,7 @@ import engine.FutureEventList;
 import behaviors.EndOfServiceEventBehavior;
 
 public class EndOfServiceEvent extends Event {
-    public EndOfServiceEvent(int clock, Entity entity) {
+    public EndOfServiceEvent(double clock, Entity entity) {
         super(clock, entity, EndOfServiceEventBehavior.getInstance());
         this.setPriority(0);
     }
@@ -20,12 +20,12 @@ public class EndOfServiceEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server> servers, FutureEventList fel) {
+    public void planificate(List<Server>[]servers, FutureEventList fel) {
         Entity entity = this.getEntity();
         Server server = entity.getAttendingServer();
         entity.setEvent(this);
 
-        int transit = this.getClock() - entity.getArrivalEvent().getClock();
+        double transit = this.getClock() - entity.getArrivalEvent().getClock();
 
         if (transit > Statistics.getMaxTransitTime(entity.getClassEntityId())) {
             Statistics.setMaxTransitTime(transit, entity.getClassEntityId());
@@ -33,7 +33,7 @@ public class EndOfServiceEvent extends Event {
         Statistics.accumulateTransitTime(transit, entity.getClassEntityId());
 
         if (!server.getQueue().isEmpty()) {
-            int wait = this.getClock() - server.getQueue().checkNext().getArrivalEvent().getClock();
+            double wait = this.getClock() - server.getQueue().checkNext().getArrivalEvent().getClock();
             if (wait > Statistics.getMaxWaitingTime(entity.getClassEntityId())) {
                 Statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
             }

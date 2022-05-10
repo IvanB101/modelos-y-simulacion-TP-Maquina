@@ -31,6 +31,6 @@ public class Maintenance extends Entity {
 
     @Override
     public void affectAirstrip(){
-        this.getAttendingServer().addDurability((int)(this.getAttendingServer().getMaxDurability()*0.15));
+        this.getAttendingServer().addDurability((this.getAttendingServer().getMaxDurability()*0.15));
     }
 }

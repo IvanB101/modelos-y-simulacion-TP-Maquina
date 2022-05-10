@@ -3,22 +3,25 @@ package resources;
 import entities.Entity;
 
 public abstract class Server {
+    private static final int classServerId = 0;
     private static int idCount = 0;
 
     // attributes
     private int id;
     private boolean busy;
     private boolean maintenance;
+    private double durability;
+    // TODO sacar de los otros 
     /**
      * init with 0 to avoid desynchronized in the firt arrival event.
      */
-    private int idleTimeStartMark = 0;
+    private double idleTimeStartMark = 0;
     /**
      * init with 0 to avoid desynchronized in the firt arrival event.
      */
-    private int idleTimeFinishMark = 0;
-    private int idleTime;
-    private int maxIdleTime = 0;
+    private double idleTimeFinishMark = 0;
+    private double idleTime;
+    private double maxIdleTime = 0;
 
     // associations
     private Entity servedEntity;
@@ -34,6 +37,10 @@ public abstract class Server {
         this.queue = queue;
     }
 
+    public int getClassserverid() {
+        return classServerId;
+    }
+
     public boolean isMaintenance() {
         return maintenance;
     }
@@ -42,7 +49,7 @@ public abstract class Server {
         this.maintenance = maintenance;
     }
 
-    public abstract void addDurability(int durability);
+    public abstract void addDurability(double durability);
 
     public abstract int getMaxDurability();
 
@@ -66,18 +73,18 @@ public abstract class Server {
         this.busy = busy;
     }
 
-    public void setIdleTimeStartMark(int idleTimeStartMark) {
+    public void setIdleTimeStartMark(double idleTimeStartMark) {
         this.idleTimeStartMark = idleTimeStartMark;
     }
 
-    public void setIdleTimeFinishMark(int idleTimeFinishMark) {
+    public void setIdleTimeFinishMark(double idleTimeFinishMark) {
         this.idleTimeFinishMark = idleTimeFinishMark;
 
         try {
             if (this.idleTimeStartMark != -1 && this.idleTimeFinishMark != -1
                     && this.idleTimeStartMark <= this.idleTimeFinishMark) {
 
-                int idleTime = this.idleTimeFinishMark - this.idleTimeStartMark;
+                double idleTime = this.idleTimeFinishMark - this.idleTimeStartMark;
                 this.idleTime += idleTime;
 
                 if (idleTime > this.maxIdleTime) {
@@ -95,8 +102,12 @@ public abstract class Server {
         }
     }
 
-    public int getIdleTime() {
+    public double getIdleTime() {
         return idleTime;
+    }
+
+    public double getDurability(){
+        return durability;
     }
 
     public Entity getServedEntity() {
@@ -111,7 +122,7 @@ public abstract class Server {
         return this.queue;
     }
 
-    public int getMaxIdleTime() {
+    public double getMaxIdleTime() {
         return maxIdleTime;
     }
 }

@@ -35,7 +35,7 @@ public class ArrivalEventBehavior extends EventBehavior {
 
     @Override
     public Event nextEvent(Event actualEvent, Entity entity, Server server) {
-        int clock;
+        double clock;
         Entity nextEntity;
 
         //Changes the parameter in rush hour for the distributions
@@ -47,19 +47,19 @@ public class ArrivalEventBehavior extends EventBehavior {
 
         switch(entity.getClassEntityId()) {
             case 1:
-                clock = (int) (Distributions.exponencial(lambdaMid[index]));
+                clock =  (Distributions.exponencial(lambdaMid[index]));
                 nextEntity = new LightAircraft(server);
                 break;
             case 2:
-                clock = (int) (Distributions.exponencial(lambdaLight[index]));
+                clock =  (Distributions.exponencial(lambdaLight[index]));
                 nextEntity = new MidAircraft(server);
                 break;
             case 3:
-                clock = (int) (Distributions.normal(averageHeavy[index], desviationHeavy));
+                clock =  (Distributions.normal(averageHeavy[index], desviationHeavy));
                 nextEntity = new HeavyAircraft(server);
                 break;
             default:
-                clock = (int) (Distributions.normal(averageMaintenance, desviationMaintenance));
+                clock =  (Distributions.normal(averageMaintenance, desviationMaintenance));
                 nextEntity = new Maintenance(server);
         }
 
