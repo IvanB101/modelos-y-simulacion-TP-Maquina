@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
-import entities.Entity;
 import resources.Server;
 import utils.CustomRandomizer;
-import utils.Distributions;
 import utils.Statistics;
 import resources.HeavyAirstrip;
 import resources.LightAirstrip;
@@ -25,7 +23,6 @@ import events.Event;
 import resources.CustomQueue;
 import events.StopExecutionEvent;
 import policies.ServerSelectionPolicy;
-import resources.Queue;
 
 /**
  * Event oriented simulation of an airport
@@ -69,11 +66,13 @@ public class AirportSimulation implements Engine {
             servers.add(new HeavyAirstrip(new CustomQueue()));
         }
 
+        this.statistics.setServers(servers);
+
         this.fel.insert(new StopExecutionEvent(endTime));
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
-        // this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
     }
 
     @Override
@@ -81,75 +80,56 @@ public class AirportSimulation implements Engine {
         Event event;
 
         while (!((event = fel.getImminent()) instanceof StopExecutionEvent)) {
-            System.out.println(fel.toString());
-
             event.planificate(servers, fel, statistics);
         }
     }
 
-    // TODO
-    /*
-     * @Override
-     * public void generateReport() {
-     * int inQueueAircrafts = 0;
-     * 
-     * for (int i= 0; i<9; i++){
-     * for (Server server : servers[i]) {
-     * inQueueAircrafts += server.getQueue().size();
-     * }
-     * }
-     * int landings = Entity.getIdCount() - inQueueAircrafts - 1;
-     * 
-     * DecimalFormat format = new DecimalFormat("#0.00"), dformat = new
-     * DecimalFormat("#0.00%");
-     * 
-     * report += "Cantidad total de aterrizajes: " + landings + "\n" +
-     * "Tiempo total de espera en cola: " + Entity.getTotalWaitingTime() + "\n" +
-     * "Tiempo medio de espera en cola: " + format.format((double)
-     * Entity.getTotalWaitingTime() / landings)
-     * + "\n" +
-     * "Tiempo máximo de espera en cola: " + Entity.getMaxWaitingTime() + "\n" +
-     * "Tiempo total de transito: " + Entity.getTotalTransitTime() + "\n" +
-     * "Tiempo medio de transito: " + format.format((double)
-     * Entity.getTotalTransitTime() / landings) + "\n" +
-     * "Tiempo máximo de transito: " + Entity.getMaxTransitTime() + "\n";
-     * 
-     * report += "Tiempo total de ocio:" + "\n";
-     * for (Server server : servers) {
-     * report += "    Server " + server.getId() + ": " + server.getIdleTime() +
-     * "\n";
-     * }
-     * 
-     * report += "Tiempo máximo de ocio: " + "\n";
-     * for (Server server : servers) {
-     * report += "    Server " + server.getId() + ": " + server.getMaxIdleTime() +
-     * "\n";
-     * }
-     * 
-     * report += "Porcentaje de ocio respecto al total de tiempo:" + "\n";
-     * for (Server server : servers) {
-     * report += "    Server " + server.getId() + ": "
-     * + dformat.format((server.getIdleTime()) / (double) this.getEndTime()) + "\n";
-     * }
-     * 
-     * report += "Porcentaje del maximo de ocio respecto al tiempo total de ocio:" +
-     * "\n";
-     * for (Server server : servers) {
-     * report += "    Server " + server.getId() + ": "
-     * + dformat.format((server.getMaxIdleTime()) / (double) server.getIdleTime()) +
-     * "\n";
-     * }
-     * 
-     * report += "Tamaño máximo de la cola de espera: " + "\n";
-     * for (Server server : servers) {
-     * report += "    Server " + server.getId() + ": " +
-     * server.getQueue().getMaxSize() + "\n";
-     * }
-     * 
-     * report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
-     * }
-     * 
-     */
+    @Override
+    public void generateReport() {
+        DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
+
+        report += "Estadísticas disciminadas por tipo de Entidad:\n";
+        for (int i = 0; i < statistics.getEntityClassesNumber(); i++) {
+            int landings = (statistics.getInQueueAircrafts(i) - statistics.getIdCount(i));
+            report += statistics.getClassEntityName(i) + "\n" +
+                    "Cantidad total de aterrizajes: " + landings + "\n" +
+                    "Tiempo total de espera en cola: " + format.format(statistics.getTotalWaitingTime(i)) + "\n" +
+                    "Tiempo medio de espera en cola: " + format.format(statistics.getTotalWaitingTime(i) / landings)
+                    + "\n" +
+                    "Tiempo máximo de espera en cola: " + format.format(statistics.getMaxWaitingTime(i)) + "\n" +
+                    "Tiempo medio de transito: " + format.format(statistics.getTotalTransitTime(i) / landings) + "\n" +
+                    "Tiempo máximo de transito: " + format.format(statistics.getMaxTransitTime(i)) + "\n\n";
+        }
+
+        report += "\nEstadísticas por Servidor según Id";
+        for (Server server : servers) {
+            report += "Server " + server.getId() + "   " + statistics.getClassServerName(server.getClassServerid())
+                    + "\n" +
+                    "Tiempo total de ocio: " + format.format(server.getIdleTime()) + "\n" +
+                    "Tiempo máximo de ocio: " + format.format(server.getMaxIdleTime()) + "\n" +
+                    "Porcentaje de tiempo de ocio ocio respecto al total: "
+                    + dformat.format(server.getIdleTime() / endTime) + "\n" +
+                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
+                    + dformat.format(server.getMaxIdleTime() / server.getIdleTime()) + "\n" +
+                    "Tamaño máximo de la cola de espera: " + server.getQueue().getMaxSize() + "\n\n";
+        }
+
+        report += "\nEstadísticas por Servidor discriminadas por tipo";
+        for (int i = 0; i < statistics.getServerClassesNumber(); i++) {
+            report += statistics.getClassServerName(i) + "\n" +
+                    "Tiempo total de ocio: " + format.format(statistics.getTotalIdleTime(i)) + "\n" +
+                    "Tiempo máximo de ocio: " + format.format(statistics.getMaxIdleTime(i)) + "\n" +
+                    "Porcentaje de tiempo de ocio ocio respecto al total: "
+                    + dformat.format(statistics.getTotalIdleTime(i) / (endTime * statistics.getServerAmount(i))) + "\n"
+                    +
+                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
+                    + dformat.format(statistics.getMaxIdleTime(i) / statistics.getTotalIdleTime(i)) + "\n" +
+                    "Tamaño máximo de la cola de espera: " + statistics.getMaxQueueSize(i) + "\n\n";
+        }
+
+        report += "\nSemilla utilizada: " + CustomRandomizer.getSeed() + "\n";
+    }
+
     @Override
     public void saveReport() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SS");
@@ -180,10 +160,5 @@ public class AirportSimulation implements Engine {
 
     public Statistics getStatistics() {
         return statistics;
-    }
-
-    @Override
-    public void generateReport() {
-        // TODO borrar
     }
 }

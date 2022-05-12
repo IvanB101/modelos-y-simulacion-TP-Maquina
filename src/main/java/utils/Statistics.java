@@ -8,9 +8,9 @@ public class Statistics {
 
     // Entity statistics
     private final int entityClassesNumber = 5;
-
     private final String[] entityHeader = { "General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft",
             "Maintenance" };
+
     private int[] idCount = new int[entityClassesNumber];
     private double[] totalWaitingTime = new double[entityClassesNumber];
     private double[] maxWaitingTime = new double[entityClassesNumber];
@@ -19,6 +19,10 @@ public class Statistics {
 
     public Statistics(List<Server> servers) {
         this.servers = servers;
+    }
+
+    public int getEntityClassesNumber() {
+        return this.entityClassesNumber;
     }
 
     public String getClassEntityName(int classEntityId) {
@@ -65,8 +69,13 @@ public class Statistics {
         this.maxTransitTime[classEntityId] = maxTransitTime;
     }
 
+    public void setServers(List<Server> servers) {
+        this.servers = servers;
+    }
+
     // Server statistics discriminated by class
     private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
+    private final int serverClassesNumber = 4;
     private final int[] serverAmounts = { 9, 3, 4, 2 };
 
     public int getServerAmount(int classServerId) {
@@ -75,6 +84,10 @@ public class Statistics {
 
     public String getClassServerName(int classServerId) {
         return serverHeader[classServerId];
+    }
+
+    public int getServerClassesNumber() {
+        return serverClassesNumber;
     }
 
     /**
@@ -146,5 +159,26 @@ public class Statistics {
         }
 
         return MaxQueueSize;
+    }
+
+    /**
+     * @return in-Queue aircrafts of all servers with the specified id
+     */
+    public int getInQueueAircrafts(int classServerId) {
+        int inQueueAircrafts = 0;
+
+        if (classServerId == 0) {
+            for (Server server : servers) {
+                inQueueAircrafts = server.getQueue().size();
+            }
+        } else {
+            for (Server server : servers) {
+                if (server.getClassServerid() == classServerId) {
+                    inQueueAircrafts = server.getQueue().size();
+                }
+            }
+        }
+
+        return inQueueAircrafts;
     }
 }

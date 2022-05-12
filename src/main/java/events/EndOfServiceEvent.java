@@ -25,12 +25,19 @@ public class EndOfServiceEvent extends Event {
         Server server = entity.getAttendingServer();
         entity.setEvent(this);
 
-        double transit = this.getClock() - entity.getArrivalEvent().getClock();
-
+        //Adds the transit time of the entity to the statistics, which is calculated in the EndOfServiceBehavior
+        double transit = entity.getTransitTime();
         if (transit > statistics.getMaxTransitTime(entity.getClassEntityId())) {
             statistics.setMaxTransitTime(transit, entity.getClassEntityId());
         }
         statistics.accumulateTransitTime(transit, entity.getClassEntityId());
+
+        //Adds the waiting time of the entity to the statistics, which is calculated in the EndOfServiceBehavior
+        double wait = entity.getWaitingTime();
+        if (wait > statistics.getMaxWaitingTime(entity.getClassEntityId())) {
+            statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
+        }
+        statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
 
         if (!server.getQueue().isEmpty()) {
             fel.insert(this.getEventBehavior().nextEvent(this, server.getQueue().next(), statistics));

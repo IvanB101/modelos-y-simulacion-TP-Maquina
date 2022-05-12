@@ -36,11 +36,9 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
 
-        double wait = actualEvent.getClock() - entity.getArrivalEvent().getClock();
-        if (wait > statistics.getMaxWaitingTime(entity.getClassEntityId())) {
-            statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
-        }
-        statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
+        //Calculates and gives the waiting time for the entity
+        double waitingTime = actualEvent.getClock() - entity.getArrivalEvent().getClock();
+        entity.setWaitingTime(waitingTime);
 
         if (entity instanceof HeavyAircraft) {
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
@@ -49,8 +47,16 @@ public class EndOfServiceEventBehavior extends EventBehavior {
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
+            if (actualEvent.getClock() == 0) {
+                clock = 0;
+            } else {
+                clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
+            }
         }
+
+        //Calculates and gives the transit time for the entity
+        double transitTime = waitingTime + clock;
+        entity.setTransitTime(transitTime);
 
         entity.affectAirstrip();
         return new EndOfServiceEvent(actualEvent.getClock() + clock, entity);

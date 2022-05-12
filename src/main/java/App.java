@@ -13,8 +13,8 @@ public class App {
         //Last parameter is an optional seed, if it is 0 then it uses the PC clock
         Engine engine = new AirportSimulation(1, EXECUTION_TIME, MultipleServerModelPolicy.getInstance(), 0);
         engine.execute();
-        //engine.generateReport();
-        //engine.showReport();
+        engine.generateReport();
+        engine.showReport();
         //engine.saveReport();
     }
 }

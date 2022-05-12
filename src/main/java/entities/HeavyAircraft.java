@@ -31,7 +31,7 @@ public class HeavyAircraft extends Entity {
 
     @Override
     public void affectAirstrip() {
-        this.getAttendingServer().addDurability( Distributions.uniform(valuesHeavy[0], valuesHeavy[1]));
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesHeavy[0], valuesHeavy[1]));
     }
 
     public int getTypeId() {

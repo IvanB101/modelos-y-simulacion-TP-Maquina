@@ -5,7 +5,7 @@ import utils.Statistics;
 
 public class LightAircraft extends Entity {
     private static final int classEntityId = 1;
-    private static final int[]valuesLight= {0,-1};
+    private static final int[] valuesLight = { 0, -1 };
 
     private int typeId;
 
@@ -32,8 +32,9 @@ public class LightAircraft extends Entity {
     public int getTypeId() {
         return typeId;
     }
+
     @Override
-    public void affectAirstrip(){
-        this.getAttendingServer().addDurability(Distributions.uniform(valuesLight[0],valuesLight[1]));
+    public void affectAirstrip() {
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesLight[0], valuesLight[1]));
     }
 }
