@@ -16,6 +16,5 @@ public class App {
         //engine.generateReport();
         //engine.showReport();
         //engine.saveReport();
-        System.out.println("termine");
     }
 }

@@ -36,7 +36,7 @@ public class AirportSimulation implements Engine {
             "==============================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
-    private List<Server>servers;
+    private List<Server> servers;
     private Statistics statistics;
 
     /**
@@ -73,7 +73,7 @@ public class AirportSimulation implements Engine {
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
-        //this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
+        // this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
     }
 
     @Override
@@ -81,65 +81,75 @@ public class AirportSimulation implements Engine {
         Event event;
 
         while (!((event = fel.getImminent()) instanceof StopExecutionEvent)) {
+            System.out.println(fel.toString());
+
             event.planificate(servers, fel, statistics);
         }
     }
 
-    //TODO
+    // TODO
     /*
-    @Override
-    public void generateReport() {
-        int inQueueAircrafts = 0;
-
-        for (int i= 0; i<9; i++){
-            for (Server server : servers[i]) {
-                inQueueAircrafts += server.getQueue().size();
-            }
-        }
-        int landings = Entity.getIdCount() - inQueueAircrafts - 1;
-
-        DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
-
-        report += "Cantidad total de aterrizajes: " + landings + "\n" +
-                "Tiempo total de espera en cola: " + Entity.getTotalWaitingTime() + "\n" +
-                "Tiempo medio de espera en cola: " + format.format((double) Entity.getTotalWaitingTime() / landings)
-                + "\n" +
-                "Tiempo máximo de espera en cola: " + Entity.getMaxWaitingTime() + "\n" +
-                "Tiempo total de transito: " + Entity.getTotalTransitTime() + "\n" +
-                "Tiempo medio de transito: " + format.format((double) Entity.getTotalTransitTime() / landings) + "\n" +
-                "Tiempo máximo de transito: " + Entity.getMaxTransitTime() + "\n";
-
-        report += "Tiempo total de ocio:" + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getIdleTime() + "\n";
-        }
-
-        report += "Tiempo máximo de ocio: " + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getMaxIdleTime() + "\n";
-        }
-
-        report += "Porcentaje de ocio respecto al total de tiempo:" + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": "
-                    + dformat.format((server.getIdleTime()) / (double) this.getEndTime()) + "\n";
-        }
-
-        report += "Porcentaje del maximo de ocio respecto al tiempo total de ocio:" + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": "
-                    + dformat.format((server.getMaxIdleTime()) / (double) server.getIdleTime()) + "\n";
-        }
-
-        report += "Tamaño máximo de la cola de espera: " + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getQueue().getMaxSize() + "\n";
-        }
-
-        report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
-    }
-
-    */
+     * @Override
+     * public void generateReport() {
+     * int inQueueAircrafts = 0;
+     * 
+     * for (int i= 0; i<9; i++){
+     * for (Server server : servers[i]) {
+     * inQueueAircrafts += server.getQueue().size();
+     * }
+     * }
+     * int landings = Entity.getIdCount() - inQueueAircrafts - 1;
+     * 
+     * DecimalFormat format = new DecimalFormat("#0.00"), dformat = new
+     * DecimalFormat("#0.00%");
+     * 
+     * report += "Cantidad total de aterrizajes: " + landings + "\n" +
+     * "Tiempo total de espera en cola: " + Entity.getTotalWaitingTime() + "\n" +
+     * "Tiempo medio de espera en cola: " + format.format((double)
+     * Entity.getTotalWaitingTime() / landings)
+     * + "\n" +
+     * "Tiempo máximo de espera en cola: " + Entity.getMaxWaitingTime() + "\n" +
+     * "Tiempo total de transito: " + Entity.getTotalTransitTime() + "\n" +
+     * "Tiempo medio de transito: " + format.format((double)
+     * Entity.getTotalTransitTime() / landings) + "\n" +
+     * "Tiempo máximo de transito: " + Entity.getMaxTransitTime() + "\n";
+     * 
+     * report += "Tiempo total de ocio:" + "\n";
+     * for (Server server : servers) {
+     * report += "    Server " + server.getId() + ": " + server.getIdleTime() +
+     * "\n";
+     * }
+     * 
+     * report += "Tiempo máximo de ocio: " + "\n";
+     * for (Server server : servers) {
+     * report += "    Server " + server.getId() + ": " + server.getMaxIdleTime() +
+     * "\n";
+     * }
+     * 
+     * report += "Porcentaje de ocio respecto al total de tiempo:" + "\n";
+     * for (Server server : servers) {
+     * report += "    Server " + server.getId() + ": "
+     * + dformat.format((server.getIdleTime()) / (double) this.getEndTime()) + "\n";
+     * }
+     * 
+     * report += "Porcentaje del maximo de ocio respecto al tiempo total de ocio:" +
+     * "\n";
+     * for (Server server : servers) {
+     * report += "    Server " + server.getId() + ": "
+     * + dformat.format((server.getMaxIdleTime()) / (double) server.getIdleTime()) +
+     * "\n";
+     * }
+     * 
+     * report += "Tamaño máximo de la cola de espera: " + "\n";
+     * for (Server server : servers) {
+     * report += "    Server " + server.getId() + ": " +
+     * server.getQueue().getMaxSize() + "\n";
+     * }
+     * 
+     * report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
+     * }
+     * 
+     */
     @Override
     public void saveReport() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SS");

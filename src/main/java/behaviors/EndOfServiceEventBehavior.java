@@ -13,12 +13,12 @@ import events.EndOfServiceEvent;
 
 public class EndOfServiceEventBehavior extends EventBehavior {
     private static EndOfServiceEventBehavior endOfServiceEventBehavior;
-    private final int[]valuesLight = {5, 10, 15};
-    private final double[]accProbabilityLight = {0.363, 0.838, 1};
-    private final int[]valuesHeavy = {40, 50};
-    private final double[]accProbabilityHeavy = {0.65, 1};
-    private final int[]valuesMid= {10,20};
-    private final int[]valuesMaintenance= {12*60,24*60};
+    private final int[] valuesLight = { 5, 10, 15 };
+    private final double[] accProbabilityLight = { 0.363, 0.838, 1 };
+    private final int[] valuesHeavy = { 40, 50 };
+    private final double[] accProbabilityHeavy = { 0.65, 1 };
+    private final int[] valuesMid = { 10, 20 };
+    private final int[] valuesMaintenance = { 12 * 60, 24 * 60 };
 
     private EndOfServiceEventBehavior(Randomizer randomizer) {
         super();
@@ -42,17 +42,17 @@ public class EndOfServiceEventBehavior extends EventBehavior {
         }
         statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
 
-        if (entity instanceof HeavyAircraft){
+        if (entity instanceof HeavyAircraft) {
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
         } else if (entity instanceof MidAircraft) {
-            clock =Distributions.uniform(valuesMid[0],valuesMid[1]);
+            clock = Distributions.uniform(valuesMid[0], valuesMid[1]);
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            clock =Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
+            clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
         }
 
-        // todo efecto
+        entity.affectAirstrip();
         return new EndOfServiceEvent(actualEvent.getClock() + clock, entity);
     }
 }
