@@ -16,22 +16,22 @@ public abstract class Distributions {
         return values[values.length - 1];
     }
 
-    public static double uniform(double a, double b) {
+    public static double uniform(int a, int b) {
         double random = randomizer.nextRandom();
 
         return a + (b - a) * random;
     }
 
-    public static double exponencial(double lambda) {
+    public static double exponencial(int lambda) {
         double random = randomizer.nextRandom();
 
-        return (-1 / lambda) * (Math.log(1 - random));
+        return (-1 / (double) lambda) * (Math.log(1 - random));
     }
 
     public static double normal(double average, double desviation) {
         double n = 0.0;
 
-        // Generation of normal variable
+        //Generation of normal variable
         for (int i = 0; i < numNormal; i++) {
             n += randomizer.nextRandom();
         }

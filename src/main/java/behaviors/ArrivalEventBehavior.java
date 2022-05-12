@@ -7,6 +7,7 @@ import entities.Maintenance;
 import entities.MidAircraft;
 import events.ArrivalEvent;
 import events.Event;
+import resources.Server;
 import utils.CustomRandomizer;
 import utils.Distributions;
 import utils.Randomizer;
@@ -15,12 +16,12 @@ import utils.Statistics;
 public class ArrivalEventBehavior extends EventBehavior {
     private static ArrivalEventBehavior arrivalEventBehavior;
 
-    private final double averageHeavy[] = { 60, 30 };
-    private final double desviationHeavy = 2;
-    private final double lambdaLight[] = { (double) 1 / 40, (double) 1 / 20 };
-    private final double lambdaMid[] = { (double) 1 / 30, (double) 1 / 15 };
-    private final double averageMaintenance = 5 * 24 * 60;
-    private final double desviationMaintenance = 0.5 * 24 * 60;
+    private final int averageHeavy[] = { 60, 30 };
+    private final int desviationHeavy = 2;
+    private final int lambdaLight[] = {40,20};
+    private final int lambdaMid[] = {30,15};
+    private final double averageMaintenance = 5*24;
+    private final double desviationMaintenance = 0.5*24;
 
     private ArrivalEventBehavior(Randomizer randomizer) {
         super();
@@ -34,36 +35,36 @@ public class ArrivalEventBehavior extends EventBehavior {
     }
 
     @Override
-    public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
+    public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics ) {
         double clock;
         Entity nextEntity;
 
-        // Changes the parameter in rush hour for the distributions
+        //Changes the parameter in rush hour for the distributions
         int index = 0;
 
-        if ((actualEvent.getClock() % 720) >= 7 * 60 && (actualEvent.getClock() % 720) <= 10 * 60) {
+        if ((actualEvent.getClock() % 720) >= 7*60 && (actualEvent.getClock() % 720) <= 10*60) {
             index = 1;
         }
 
-        switch (entity.getClassEntityId()) {
+        switch(entity.getClassEntityId()) {
             case 1:
-                clock = (Distributions.exponencial(lambdaLight[index]));
+                clock = Distributions.exponencial(lambdaMid[index]);
                 nextEntity = new LightAircraft(statistics);
                 break;
             case 2:
-                clock = (Distributions.exponencial(lambdaMid[index]));
+                clock =  (Distributions.exponencial(lambdaLight[index]));
                 nextEntity = new MidAircraft(statistics);
                 break;
             case 3:
-                clock = (Distributions.normal(averageHeavy[index], desviationHeavy));
+                clock =  (Distributions.normal(averageHeavy[index], desviationHeavy));
                 nextEntity = new HeavyAircraft(statistics);
                 break;
             default:
-                clock = (Distributions.normal(averageMaintenance, desviationMaintenance));
+                clock =  (Distributions.normal(averageMaintenance, desviationMaintenance));
                 nextEntity = new Maintenance(statistics);
+                break;
         }
 
-        return new ArrivalEvent(actualEvent.getClock() + clock, nextEntity,
-                ((ArrivalEvent) actualEvent).getSelectionPolicy());
+        return new ArrivalEvent(clock, nextEntity, ((ArrivalEvent)actualEvent).getSelectionPolicy());
     }
 }

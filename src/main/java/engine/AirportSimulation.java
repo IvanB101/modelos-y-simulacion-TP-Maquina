@@ -51,10 +51,10 @@ public class AirportSimulation implements Engine {
             CustomRandomizer.setSeed(seed);
         }
 
-        this.statistics = new Statistics(servers);
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();
+        this.statistics = new Statistics(servers);
 
         for (int i = 0; i < statistics.getServerAmount(LightAircraft.getClassId()); i++) {
             servers.add(new LightAirstrip(new CustomQueue()));
@@ -65,8 +65,6 @@ public class AirportSimulation implements Engine {
         for (int i = 0; i < statistics.getServerAmount(HeavyAircraft.getClassId()); i++) {
             servers.add(new HeavyAirstrip(new CustomQueue()));
         }
-
-        this.statistics.setServers(servers);
 
         this.fel.insert(new StopExecutionEvent(endTime));
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));

@@ -169,12 +169,12 @@ public class Statistics {
 
         if (classServerId == 0) {
             for (Server server : servers) {
-                inQueueAircrafts = server.getQueue().size();
+                inQueueAircrafts += server.getQueue().size();
             }
         } else {
             for (Server server : servers) {
                 if (server.getClassServerid() == classServerId) {
-                    inQueueAircrafts = server.getQueue().size();
+                    inQueueAircrafts += server.getQueue().size();
                 }
             }
         }
