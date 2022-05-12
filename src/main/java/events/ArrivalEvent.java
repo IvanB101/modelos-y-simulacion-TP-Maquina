@@ -2,6 +2,7 @@ package events;
 
 import java.util.List;
 import resources.Server;
+import utils.Statistics;
 import entities.Entity;
 import engine.FutureEventList;
 import policies.ServerSelectionPolicy;
@@ -28,22 +29,25 @@ public class ArrivalEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server>[]servers, FutureEventList fel) {
-        Server server = this.getSelectionPolicy().selectServer(servers, this.getEntity().getClassEntityId());
-        this.getEntity().setEvent(this);
+    public void planificate(List<Server> servers, FutureEventList fel, Statistics statistics) {
+        Entity entity = this.getEntity();
+        Server server = this.getSelectionPolicy().selectServer(servers, entity.getClassEntityId());
+        entity.setEvent(this);
+        entity.setAttendingServer(server);
 
         if (server.isBusy()) {
-            server.getQueue().enqueue(this.getEntity());
+            server.getQueue().enqueue(entity);
         } else {
-            server.setServedEntity(this.getEntity());
+            server.setServedEntity(entity);
             server.setBusy(true);
-            fel.insert(this.endOfServiceEventBehavior.nextEvent(this, this.getEntity(), null));
+            fel.insert(this.endOfServiceEventBehavior.nextEvent(this, entity, statistics));
             server.setIdleTimeFinishMark(this.getClock());
         }
-        if (this.getEntity().getClassEntityId() == 4)
+
+        if (entity.getClassEntityId() == 4)
             server.setMaintenance(true);
 
-        fel.insert(this.getEventBehavior().nextEvent(this, this.getEntity(), server));
+        fel.insert(this.getEventBehavior().nextEvent(this, entity, statistics));
     }
 
     @Override

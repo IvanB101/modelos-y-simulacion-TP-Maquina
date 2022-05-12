@@ -2,6 +2,7 @@ package events;
 
 import java.util.List;
 import resources.Server;
+import utils.Statistics;
 import engine.FutureEventList;
 
 public class StopExecutionEvent extends Event {
@@ -17,6 +18,6 @@ public class StopExecutionEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server>[]servers, FutureEventList fel) {
+    public void planificate(List<Server>servers, FutureEventList fel, Statistics statistics) {
     }
 }

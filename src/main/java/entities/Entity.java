@@ -27,18 +27,22 @@ public abstract class Entity {
      */
     private Comparator<Event> comparator = Event.getComparator();
 
-    public Entity(Server server) {
-        Statistics.addIdCount(classEntityId);
-        this.id = Statistics.getIdCount(classEntityId);
+    public Entity(Statistics statistics) {
+        statistics.addIdCount(classEntityId);
+        this.id = statistics.getIdCount(classEntityId);
         this.waitingTime = 0;
         this.transitTime = 0;
-        this.attendingServer = server;
+        this.attendingServer = null;
         this.events = new LinkedList<Event>();
     }
 
     public abstract void affectAirstrip();
 
     public int getClassEntityId() {
+        return classEntityId;
+    }
+
+    public static int getClassId() {
         return classEntityId;
     }
 

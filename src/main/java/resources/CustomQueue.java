@@ -9,6 +9,10 @@ public class CustomQueue extends Queue {
         super(new LinkedList<Entity>());
     }
 
+    public CustomQueue(int size) {
+        super(new LinkedList<Entity>(), size);
+    }
+
     public void enqueue(Entity entity) {
         this.getQueue().add(entity);
 

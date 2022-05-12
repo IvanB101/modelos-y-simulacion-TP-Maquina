@@ -11,7 +11,6 @@ public abstract class Server {
     private boolean busy;
     private boolean maintenance;
     private double durability;
-    // TODO sacar de los otros 
     /**
      * init with 0 to avoid desynchronized in the firt arrival event.
      */
@@ -35,9 +34,10 @@ public abstract class Server {
         this.idleTime = 0;
         this.servedEntity = null;
         this.queue = queue;
+        this.durability = getMaxDurability();
     }
 
-    public int getClassserverid() {
+    public int getClassServerid() {
         return classServerId;
     }
 
@@ -49,7 +49,9 @@ public abstract class Server {
         this.maintenance = maintenance;
     }
 
-    public abstract void addDurability(double durability);
+    public void addDurability(double durability) {
+        this.durability += durability % getMaxDurability();
+    }
 
     public abstract int getMaxDurability();
 
@@ -106,7 +108,7 @@ public abstract class Server {
         return idleTime;
     }
 
-    public double getDurability(){
+    public double getDurability() {
         return durability;
     }
 

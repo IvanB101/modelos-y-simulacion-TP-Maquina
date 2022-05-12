@@ -16,6 +16,7 @@ import entities.Entity;
 import resources.Server;
 import utils.CustomRandomizer;
 import utils.Distributions;
+import utils.Statistics;
 import resources.HeavyAirstrip;
 import resources.LightAirstrip;
 import resources.MidAirstrip;
@@ -35,7 +36,8 @@ public class AirportSimulation implements Engine {
             "==============================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
-    private List<Server>[]servers;
+    private List<Server>servers;
+    private Statistics statistics;
 
     /**
      * Creates the execution engine for the airport simulator.
@@ -46,45 +48,32 @@ public class AirportSimulation implements Engine {
      * @param policy           The object that defines the airstrip selection policy
      *                         each time an arrival occurs.
      */
-    //TODO
     public AirportSimulation(int airstripQuantity, double endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
         }
 
+        this.statistics = new Statistics(servers);
         this.endTime = endTime;
         this.fel = new FutureEventList();
-        this.servers = new List[3];
+        this.servers = new ArrayList<Server>();
 
-        for (int i = 0; i < servers.length; i++) {
-            servers[i] = new ArrayList<Server>();
+        for (int i = 0; i < statistics.getServerAmount(LightAircraft.getClassId()); i++) {
+            servers.add(new LightAirstrip(new CustomQueue()));
         }
-
-        for (int i = 0; i < 3; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[0].add(new LightAirstrip(queue));
-            queue.setAssignedServer(servers[0].get(i));
+        for (int i = 0; i < statistics.getServerAmount(MidAircraft.getClassId()); i++) {
+            servers.add(new MidAirstrip(new CustomQueue()));
         }
-
-        for (int i = 3; i < 7; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[1].add(new MidAirstrip(queue));
-            queue.setAssignedServer(servers[1].get(i));
-        }
-
-        for (int i = 7; i < 9; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[2].add(new HeavyAirstrip(queue));
-            queue.setAssignedServer(servers[2].get(i));
+        for (int i = 0; i < statistics.getServerAmount(HeavyAircraft.getClassId()); i++) {
+            servers.add(new HeavyAirstrip(new CustomQueue()));
         }
 
         this.fel.insert(new StopExecutionEvent(endTime));
-        this.fel.insert(new ArrivalEvent(0, new LightAircraft(policy.selectServer(servers, 1)), policy));
-        this.fel.insert(new ArrivalEvent(0, new MidAircraft(policy.selectServer(servers, 2)), policy));
-        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(policy.selectServer(servers, 3)), policy));
-        this.fel.insert(new ArrivalEvent(5*1440, new Maintenance(policy.selectServer(servers, 1)), policy));
-
+        this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
+        //this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
     }
 
     @Override
@@ -92,7 +81,7 @@ public class AirportSimulation implements Engine {
         Event event;
 
         while (!((event = fel.getImminent()) instanceof StopExecutionEvent)) {
-            event.planificate(servers, fel);
+            event.planificate(servers, fel, statistics);
         }
     }
 
@@ -151,7 +140,6 @@ public class AirportSimulation implements Engine {
     }
 
     */
-    
     @Override
     public void saveReport() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SS");
@@ -176,8 +164,12 @@ public class AirportSimulation implements Engine {
         return endTime;
     }
 
-    public List<Server>[] getServers() {
+    public List<Server> getServers() {
         return this.servers;
+    }
+
+    public Statistics getStatistics() {
+        return statistics;
     }
 
     @Override

@@ -12,6 +12,6 @@ public interface ServerSelectionPolicy {
      * @param servers The list of servers to choose one among them.
      * @return The selected server by the policy.
      */
-    Server selectServer(List<Server>[]servers, int classEntityId);
+    Server selectServer(List<Server>servers, int classEntityId);
 
 }

@@ -1,7 +1,6 @@
 
 package entities;
 
-import resources.Server;
 import utils.Statistics;
 
 public class Maintenance extends Entity {
@@ -9,10 +8,10 @@ public class Maintenance extends Entity {
 
     private int typeId;
 
-    public Maintenance(Server server) {
-        super(server);
-        Statistics.addIdCount(classEntityId);
-        this.typeId = Statistics.getIdCount(classEntityId);
+    public Maintenance(Statistics statistics) {
+        super(statistics);
+        statistics.addIdCount(classEntityId);
+        this.typeId = statistics.getIdCount(classEntityId);
     }
 
     @Override
@@ -22,6 +21,10 @@ public class Maintenance extends Entity {
 
     @Override
     public int getClassEntityId() {
+        return classEntityId;
+    }
+
+    public static int getClassId() {
         return classEntityId;
     }
 

@@ -1,12 +1,12 @@
 package behaviors;
 
 import events.Event;
-import resources.Server;
 import entities.Entity;
 import entities.HeavyAircraft;
 import entities.LightAircraft;
 import entities.MidAircraft;
 import utils.Randomizer;
+import utils.Statistics;
 import utils.CustomRandomizer;
 import utils.Distributions;
 import events.EndOfServiceEvent;
@@ -33,8 +33,14 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     }
 
     @Override
-    public Event nextEvent(Event actualEvent, Entity entity, Server server) {
+    public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
+
+        double wait = actualEvent.getClock() - entity.getArrivalEvent().getClock();
+        if (wait > statistics.getMaxWaitingTime(entity.getClassEntityId())) {
+            statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
+        }
+        statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
 
         if (entity instanceof HeavyAircraft){
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);

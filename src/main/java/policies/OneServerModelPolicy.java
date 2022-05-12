@@ -18,7 +18,7 @@ public class OneServerModelPolicy implements ServerSelectionPolicy {
     }
 
     @Override
-    public Server selectServer(List<Server>[]servers, int classEntityId) {
-        return servers[0].get(0);
+    public Server selectServer(List<Server>servers, int classEntityId) {
+        return servers.get(0);
     }
 }

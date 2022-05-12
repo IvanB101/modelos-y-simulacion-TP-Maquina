@@ -1,7 +1,7 @@
 package behaviors;
 
 import events.Event;
-import resources.Server;
+import utils.Statistics;
 import entities.Entity;
 
 public abstract class EventBehavior {
@@ -15,5 +15,5 @@ public abstract class EventBehavior {
      * @param entity      The corresponding entity for the next event.
      * @return The next event.
      */
-    public abstract Event nextEvent(Event actualEvent, Entity entity, Server server);
+    public abstract Event nextEvent(Event actualEvent, Entity entity, Statistics statistics);
 }

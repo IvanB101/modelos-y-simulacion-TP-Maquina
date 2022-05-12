@@ -12,6 +12,11 @@ public abstract class Queue {
         this.maxSize = 0;
     }
 
+    public Queue(java.util.Queue<Entity> queue, int size) {
+        this.queue = queue;
+        this.maxSize = size;
+    }
+
     public Server getAssignedServer() {
         return this.assignedServer;
     }

@@ -1,6 +1,5 @@
 package entities;
 
-import resources.Server;
 import utils.Distributions;
 import utils.Statistics;
 
@@ -10,10 +9,10 @@ public class MidAircraft extends Entity {
 
     private int typeId;
 
-    public MidAircraft(Server server) {
-        super(server);
-        Statistics.addIdCount(classEntityId);
-        this.typeId = Statistics.getIdCount(classEntityId);
+    public MidAircraft(Statistics statistics) {
+        super(statistics);
+        statistics.addIdCount(classEntityId);
+        this.typeId = statistics.getIdCount(classEntityId);
     }
 
     @Override
@@ -23,6 +22,10 @@ public class MidAircraft extends Entity {
 
     @Override
     public int getClassEntityId() {
+        return classEntityId;
+    }
+
+    public static int getClassId() {
         return classEntityId;
     }
 

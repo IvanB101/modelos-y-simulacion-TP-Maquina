@@ -7,10 +7,10 @@ import entities.Maintenance;
 import entities.MidAircraft;
 import events.ArrivalEvent;
 import events.Event;
-import resources.Server;
 import utils.CustomRandomizer;
 import utils.Distributions;
 import utils.Randomizer;
+import utils.Statistics;
 
 public class ArrivalEventBehavior extends EventBehavior {
     private static ArrivalEventBehavior arrivalEventBehavior;
@@ -34,7 +34,7 @@ public class ArrivalEventBehavior extends EventBehavior {
     }
 
     @Override
-    public Event nextEvent(Event actualEvent, Entity entity, Server server) {
+    public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
         Entity nextEntity;
 
@@ -48,19 +48,19 @@ public class ArrivalEventBehavior extends EventBehavior {
         switch(entity.getClassEntityId()) {
             case 1:
                 clock =  (Distributions.exponencial(lambdaMid[index]));
-                nextEntity = new LightAircraft(server);
+                nextEntity = new LightAircraft(statistics);
                 break;
             case 2:
                 clock =  (Distributions.exponencial(lambdaLight[index]));
-                nextEntity = new MidAircraft(server);
+                nextEntity = new MidAircraft(statistics);
                 break;
             case 3:
                 clock =  (Distributions.normal(averageHeavy[index], desviationHeavy));
-                nextEntity = new HeavyAircraft(server);
+                nextEntity = new HeavyAircraft(statistics);
                 break;
             default:
                 clock =  (Distributions.normal(averageMaintenance, desviationMaintenance));
-                nextEntity = new Maintenance(server);
+                nextEntity = new Maintenance(statistics);
         }
 
         return new ArrivalEvent(clock, nextEntity, ((ArrivalEvent)actualEvent).getSelectionPolicy());
