@@ -1,10 +1,10 @@
 package resources;
 
 import entities.Entity;
+import utils.Statistics;
 
 public abstract class Server {
     private static final int classServerId = 0;
-    private static int idCount = 0;
 
     // attributes
     private int id;
@@ -26,9 +26,9 @@ public abstract class Server {
     private Entity servedEntity;
     private Queue queue;
 
-    public Server(Queue queue) {
-        idCount++;
-        this.id = idCount;
+    public Server(Queue queue, Statistics statistics) {
+        statistics.addServerIdCount(classServerId);
+        this.id = statistics.getServerIdCount(classServerId);
         this.busy = false;
         this.setMaintenance(false);
         this.idleTime = 0;
@@ -57,14 +57,6 @@ public abstract class Server {
 
     public int getId() {
         return this.id;
-    }
-
-    public static int getIdCount() {
-        return idCount;
-    }
-
-    public static void setIdCount(int aIdCount) {
-        idCount = aIdCount;
     }
 
     public boolean isBusy() {

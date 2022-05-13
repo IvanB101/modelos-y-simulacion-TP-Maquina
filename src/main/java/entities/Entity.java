@@ -28,8 +28,8 @@ public abstract class Entity {
     private Comparator<Event> comparator = Event.getComparator();
 
     public Entity(Statistics statistics) {
-        statistics.addIdCount(classEntityId);
-        this.id = statistics.getIdCount(classEntityId);
+        statistics.addEntityIdCount(classEntityId);
+        this.id = statistics.getEntityIdCount(classEntityId);
         this.waitingTime = 0;
         this.transitTime = 0;
         this.attendingServer = null;

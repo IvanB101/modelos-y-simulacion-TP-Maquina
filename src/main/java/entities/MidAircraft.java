@@ -11,8 +11,8 @@ public class MidAircraft extends Entity {
 
     public MidAircraft(Statistics statistics) {
         super(statistics);
-        statistics.addIdCount(classEntityId);
-        this.typeId = statistics.getIdCount(classEntityId);
+        statistics.addEntityIdCount(classEntityId);
+        this.typeId = statistics.getEntityIdCount(classEntityId);
     }
 
     @Override

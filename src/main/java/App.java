@@ -1,6 +1,7 @@
 import engine.AirportSimulation;
 import engine.Engine;
 import policies.MultipleServerModelPolicy;
+import utils.Testecito;
 
 public class App {
     private static final int MIN_PER_DAY = 1440;
@@ -11,10 +12,11 @@ public class App {
 
     public static void main(String[] args) {
         //Last parameter is an optional seed, if it is 0 then it uses the PC clock
-        Engine engine = new AirportSimulation(1, EXECUTION_TIME, MultipleServerModelPolicy.getInstance(), 0);
+        /*Engine engine = new AirportSimulation(1, EXECUTION_TIME, MultipleServerModelPolicy.getInstance(), 0);
         engine.execute();
         engine.generateReport();
         engine.showReport();
-        //engine.saveReport();
+        //engine.saveReport();*/
+        Testecito test = new Testecito();
     }
 }

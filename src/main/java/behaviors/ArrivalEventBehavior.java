@@ -17,8 +17,8 @@ public class ArrivalEventBehavior extends EventBehavior {
 
     private final double averageHeavy[] = { 60, 30 };
     private final double desviationHeavy = 2;
-    private final double lambdaLight[] = { (double) 1 / 40, (double) 1 / 20 };
-    private final double lambdaMid[] = { (double) 1 / 30, (double) 1 / 15 };
+    private final double lambdaLight[] = { 1.0 / 40, 1.0 / 20 };
+    private final double lambdaMid[] = { 1.0 / 30, 1.0 / 15 };
     private final double averageMaintenance = 5 * 24 * 60;
     private final double desviationMaintenance = 0.5 * 24 * 60;
 

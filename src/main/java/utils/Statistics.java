@@ -1,6 +1,8 @@
 package utils;
 
 import java.util.List;
+
+import entities.Entity;
 import resources.Server;
 
 public class Statistics {
@@ -29,11 +31,11 @@ public class Statistics {
         return entityHeader[classEntityId];
     }
 
-    public int getIdCount(int classEntityId) {
+    public int getEntityIdCount(int classEntityId) {
         return idCount[classEntityId];
     }
 
-    public void addIdCount(int classEntityId) {
+    public void addEntityIdCount(int classEntityId) {
         this.idCount[classEntityId]++;
     }
 
@@ -43,10 +45,23 @@ public class Statistics {
 
     public void accumulateWaitingTime(double WaitingTime, int classEntityId) {
         this.totalWaitingTime[classEntityId] += WaitingTime;
+        this.totalWaitingTime[Entity.getClassId()] += WaitingTime;
     }
 
     public double getMaxWaitingTime(int classEntityId) {
-        return maxWaitingTime[classEntityId];
+        double ret = 0;
+
+        if (classEntityId == 0) {
+            for (int i = 1; i < entityClassesNumber; i++) {
+                if (ret < getMaxWaitingTime(i)) {
+                    ret = getMaxWaitingTime(i);
+                }
+            }
+        } else {
+            return maxWaitingTime[classEntityId];
+        }
+
+        return ret;
     }
 
     public void setMaxWaitingTime(double maxWaitingTime, int classEntityId) {
@@ -59,10 +74,23 @@ public class Statistics {
 
     public void accumulateTransitTime(double TransitTime, int classEntityId) {
         this.totalTransitTime[classEntityId] += TransitTime;
+        this.totalTransitTime[Entity.getClassId()] += TransitTime;
     }
 
     public double getMaxTransitTime(int classEntityId) {
-        return maxTransitTime[classEntityId];
+        double ret = 0;
+
+        if (classEntityId == 0) {
+            for (int i = 1; i < entityClassesNumber; i++) {
+                if (ret < getMaxTransitTime(i)) {
+                    ret = getMaxTransitTime(i);
+                }
+            }
+        } else {
+            return maxTransitTime[classEntityId];
+        }
+
+        return ret;
     }
 
     public void setMaxTransitTime(double maxTransitTime, int classEntityId) {
@@ -76,7 +104,20 @@ public class Statistics {
     // Server statistics discriminated by class
     private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
     private final int serverClassesNumber = 4;
-    private final int[] serverAmounts = { 9, 3, 4, 2 };
+    private int[] serverAmounts;// = { 9, 3, 4, 2 };
+    private int[] serverIdCount = new int[serverClassesNumber];
+
+    public int getServerIdCount(int classServerId) {
+        return serverIdCount[classServerId];
+    }
+
+    public void addServerIdCount(int classServerId) {
+        this.serverIdCount[classServerId]++;
+    }
+
+    public void setServerAmounts(int[] serverAmounts) {
+        this.serverAmounts = serverAmounts;
+    }
 
     public int getServerAmount(int classServerId) {
         return serverAmounts[classServerId];
