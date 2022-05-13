@@ -39,24 +39,25 @@ public class AirportSimulation implements Engine {
     /**
      * Creates the execution engine for the airport simulator.
      *
-     * @param airstripQuantity The number of airstrips (servers).
-     * @param endTime          The amount of time the simulator will simulate (run
-     *                         length).
-     * @param policy           The object that defines the airstrip selection policy
-     *                         each time an arrival occurs.
+     * @param configuration An array with the number of airstrips (servers) of each
+     *                      kind.
+     * @param endTime       The amount of time the simulator will simulate (run
+     *                      length).
+     * @param policy        The object that defines the airstrip selection policy
+     *                      each time an arrival occurs.
      */
-    public AirportSimulation(int[] airstripQuantity, double endTime, ServerSelectionPolicy policy, long seed) {
+    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
         }
 
-        this.statistics = new Statistics(servers);
-        statistics.setServerAmounts(airstripQuantity);
+        this.statistics = new Statistics(servers, configuration);
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();
 
+        // Inicialization of servers
         for (int i = 0; i < statistics.getServerAmount(LightAircraft.getClassId()); i++) {
             servers.add(new LightAirstrip(new CustomQueue(), statistics));
         }
@@ -69,6 +70,7 @@ public class AirportSimulation implements Engine {
 
         this.statistics.setServers(servers);
 
+        // Insertions of the first ArrivalEvent with each type of entity
         this.fel.insert(new StopExecutionEvent(endTime));
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
@@ -91,74 +93,88 @@ public class AirportSimulation implements Engine {
 
         report += "Estadísticas disciminadas por tipo de Entidad:\n\n";
 
-        String[] analytics = { "                                   ", "Cantidad total de aterrizajes:     ",
-                "Tiempo total de espera en cola:    ",
-                "Tiempo medio de espera en cola:    ", "Tiempo máximo de espera en cola:   ",
-                "Tiempo medio de transito:          ", "Tiempo máximo de transito:         " };
+        String[] header = { "", "Cantidad total de aterrizajes:",
+                "Tiempo total de espera en cola:",
+                "Tiempo medio de espera en cola:", "Tiempo máximo de espera en cola:",
+                "Tiempo medio de transito:", "Tiempo máximo de transito:" };
+
+        String[] analytics = new String[header.length];
+
+        String f1 = "%-35s", f2 = "%21s";
+
+        for (int i = 0; i < header.length; i++) {
+            analytics[i] = String.format(f1, header[i]);
+        }
 
         for (int i = 0; i < statistics.getEntityClassesNumber(); i++) {
             int landings = (statistics.getEntityIdCount(i) - statistics.getInQueueAircrafts(i));
 
-            analytics[0] += String.format("%-21s", statistics.getClassEntityName(i));
-            analytics[1] += String.format("%-21s", format.format(landings));
-            analytics[2] += String.format("%-21s", format.format(statistics.getTotalWaitingTime(i)));
-            analytics[3] += String.format("%-21s", format.format(statistics.getTotalWaitingTime(i) / landings));
-            analytics[4] += String.format("%-21s", format.format(statistics.getMaxWaitingTime(i)));
-            analytics[5] += String.format("%-21s", format.format(statistics.getTotalTransitTime(i) / landings));
-            analytics[6] += String.format("%-21s", format.format(statistics.getMaxTransitTime(i)));
+            analytics[0] += String.format(f2, statistics.getClassEntityName(i));
+            analytics[1] += String.format(f2, format.format(landings));
+            analytics[2] += String.format(f2, format.format(statistics.getTotalWaitingTime(i)));
+            analytics[3] += String.format(f2, format.format(statistics.getTotalWaitingTime(i) / landings));
+            analytics[4] += String.format(f2, format.format(statistics.getMaxWaitingTime(i)));
+            analytics[5] += String.format(f2, format.format(statistics.getTotalTransitTime(i) / landings));
+            analytics[6] += String.format(f2, format.format(statistics.getMaxTransitTime(i)));
         }
         report += String.join("\n", analytics);
 
-        /*
-         * report += "\n\n\nEstadísticas por Servidor según Id\n\n";
-         * 
-         * String[]analytics2 = { "\n\n          ", "\n\nTipo ",
-         * "\n\nTiempo total de ocio  ", "\n\nTiempo máximo de ocio ",
-         * "Porcentaje de tiempo  \nde ocio ocio respecto \nal total: ",
-         * "Porcentaje del maximo \nde ocio respecto al    \ntiempo total de ocio:",
-         * "\nTamaño máximo de la \ncola de espera:" };
-         * for (int i = 0; i < statistics.getServerAmount(0); i++) {
-         * Server server = servers.get(i);
-         * 
-         * analytics2[0] += String.format("%-10s", "Server" + servers.get(i).getId());
-         * analytics2[1] += String.format("%-21s",
-         * statistics.getClassServerName(server.getClassServerid()));
-         * analytics2[2] += String.format("%-21s", server.getIdleTime());
-         * analytics2[3] += String.format("%-21s", server.getMaxIdleTime());
-         * analytics2[4] += String.format("%-21s",
-         * server.getMaxIdleTime()/server.getIdleTime());
-         * analytics2[5] += String.format("%-21s", server.getMaxIdleTime()/endTime);
-         * analytics2[6] += String.format("%-21s", server.getQueue().getMaxSize());
-         * }
-         * report += String.join("\n", analytics2);
-         */
-        for (Server server : servers) {
-            report += "\n\nServer " + server.getId() + "   " + statistics.getClassServerName(server.getClassServerid())
-                    + "\n" +
-                    "Tiempo total de ocio: " + format.format(server.getIdleTime()) + "\n" +
-                    "Tiempo máximo de ocio: " + format.format(server.getMaxIdleTime()) + "\n" +
-                    "Porcentaje de tiempo de ocio respecto al total: "
-                    + dformat.format(server.getIdleTime() / endTime) + "\n" +
-                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
-                    + dformat.format(server.getMaxIdleTime() / server.getIdleTime()) + "\n" +
-                    "Tamaño máximo de la cola de espera: " + server.getQueue().getMaxSize() + "\n" +
-                    "Durabilidad: " + server.getDurability() + "\n\n";
+        report += "\n\n\nEstadísticas por Servidor según Id\n\n";
+
+        analytics = new String[servers.size() + 1];
+
+        String formatanalytics = "%-10s%18s%17s%16s%22s%24s%22s%12s\n";
+
+        analytics[0] = String.format(formatanalytics, "", "", "", "", "Porcentaje de tiempo",
+                "Porcentaje del maximo", "", "") +
+                String.format(formatanalytics, "", "", "Tiempo máximo", "Tiempo total",
+                        "de ocio respecto",
+                        "de ocio respecto al", "Tamaño máximo de la", "")
+                +
+                String.format(formatanalytics, "", "Tipo", "de ocio",
+                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durability");
+
+        for (int i = 0; i < statistics.getServerAmount(0); i++) {
+            Server server = servers.get(i);
+
+            analytics[i + 1] = String.format(formatanalytics, ("Server " + server.getId()),
+                    statistics.getClassServerName(server.getClassServerid()), format.format(server.getIdleTime()),
+                    format.format(server.getMaxIdleTime()),
+                    dformat.format(server.getMaxIdleTime() / server.getIdleTime()),
+                    dformat.format(server.getMaxIdleTime() / endTime), server.getQueue().getMaxSize(),
+                    format.format(server.getDurability()));
+        }
+        report += String.join("\n", analytics);
+
+        report += "\n\nEstadísticas por Servidor discriminadas por tipo\n\n";
+
+        String[] header2 = {
+                "", "Tiempo total de ocio", "Tiempo máximo de ocio", "Porcentaje de tiempo de ocio respecto al total",
+                "Porcentaje del maximo de ocio respecto al tiempo total de ocio", "Tamaño máximo de la cola de espera"
+        };
+
+        analytics = new String[header2.length];
+
+        f1 = "%-65s";
+
+        for (int i = 0; i < header2.length; i++) {
+            analytics[i] = String.format(f1, header2[i]);
         }
 
-        report += "\nEstadísticas por Servidor discriminadas por tipo\n\n";
         for (int i = 0; i < statistics.getServerClassesNumber(); i++) {
-            report += statistics.getClassServerName(i) + "\n" +
-                    "Tiempo total de ocio: " + format.format(statistics.getTotalIdleTime(i)) + "\n" +
-                    "Tiempo máximo de ocio: " + format.format(statistics.getMaxIdleTime(i)) + "\n" +
-                    "Porcentaje de tiempo de ocio ocio respecto al total: "
-                    + dformat.format(statistics.getTotalIdleTime(i) / (endTime * statistics.getServerAmount(i))) + "\n"
-                    +
-                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
-                    + dformat.format(statistics.getMaxIdleTime(i) / statistics.getTotalIdleTime(i)) + "\n" +
-                    "Tamaño máximo de la cola de espera: " + statistics.getMaxQueueSize(i) + "\n\n";
+            analytics[0] += String.format(f2, statistics.getClassServerName(i));
+            analytics[1] += String.format(f2, format.format(statistics.getTotalIdleTime(i)));
+            analytics[2] += String.format(f2, format.format(statistics.getMaxIdleTime(i)));
+            analytics[3] += String.format(f2,
+                    dformat.format(statistics.getTotalIdleTime(i) / (endTime * statistics.getServerAmount(i))));
+            analytics[4] += String.format(f2,
+                    dformat.format(statistics.getMaxIdleTime(i) / statistics.getTotalIdleTime(i)));
+            analytics[5] += String.format(f2, statistics.getMaxQueueSize(i));
         }
 
-        report += "\nSemilla utilizada: " + CustomRandomizer.getSeed() + "\n";
+        report += String.join("\n", analytics);
+
+        report += "\n\n\nSemilla utilizada: " + CustomRandomizer.getSeed() + "\n";
     }
 
     @Override
