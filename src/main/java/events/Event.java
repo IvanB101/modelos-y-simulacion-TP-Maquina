@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import entities.Entity;
 import resources.Server;
+import utils.Statistics;
 import engine.FutureEventList;
 import behaviors.EventBehavior;
 
@@ -54,7 +55,7 @@ public abstract class Event {
      * @param servers The list of servers needed to do the planification.
      * @param fel     The future event list to insert the next events.
      */
-    public abstract void planificate(List<Server>[]servers, FutureEventList fel);
+    public abstract void planificate(List<Server>servers, FutureEventList fel, Statistics statistics);
 
     public double getClock() {
         return clock;

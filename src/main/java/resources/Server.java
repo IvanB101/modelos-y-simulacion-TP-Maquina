@@ -1,17 +1,16 @@
 package resources;
 
 import entities.Entity;
+import utils.Statistics;
 
 public abstract class Server {
     private static final int classServerId = 0;
-    private static int idCount = 0;
 
     // attributes
     private int id;
     private boolean busy;
     private boolean maintenance;
     private double durability;
-    // TODO sacar de los otros 
     /**
      * init with 0 to avoid desynchronized in the firt arrival event.
      */
@@ -27,17 +26,18 @@ public abstract class Server {
     private Entity servedEntity;
     private Queue queue;
 
-    public Server(Queue queue) {
-        idCount++;
-        this.id = idCount;
+    public Server(Queue queue, Statistics statistics) {
+        statistics.addServerIdCount(classServerId);
+        this.id = statistics.getServerIdCount(classServerId);
         this.busy = false;
         this.setMaintenance(false);
         this.idleTime = 0;
         this.servedEntity = null;
         this.queue = queue;
+        this.durability = getMaxDurability();
     }
 
-    public int getClassserverid() {
+    public int getClassServerid() {
         return classServerId;
     }
 
@@ -49,20 +49,14 @@ public abstract class Server {
         this.maintenance = maintenance;
     }
 
-    public abstract void addDurability(double durability);
+    public void addDurability(double durability) {
+        this.durability += durability % getMaxDurability();
+    }
 
     public abstract int getMaxDurability();
 
     public int getId() {
         return this.id;
-    }
-
-    public static int getIdCount() {
-        return idCount;
-    }
-
-    public static void setIdCount(int aIdCount) {
-        idCount = aIdCount;
     }
 
     public boolean isBusy() {
@@ -106,7 +100,7 @@ public abstract class Server {
         return idleTime;
     }
 
-    public double getDurability(){
+    public double getDurability() {
         return durability;
     }
 

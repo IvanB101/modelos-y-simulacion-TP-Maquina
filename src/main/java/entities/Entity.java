@@ -14,8 +14,8 @@ public abstract class Entity {
 
     // attributes
     private int id;
-    private int waitingTime;
-    private int transitTime;
+    private double waitingTime;
+    private double transitTime;
 
     // associations
     private Server attendingServer;
@@ -27,12 +27,12 @@ public abstract class Entity {
      */
     private Comparator<Event> comparator = Event.getComparator();
 
-    public Entity(Server server) {
-        Statistics.addIdCount(classEntityId);
-        this.id = Statistics.getIdCount(classEntityId);
+    public Entity(Statistics statistics) {
+        statistics.addEntityIdCount(classEntityId);
+        this.id = statistics.getEntityIdCount(classEntityId);
         this.waitingTime = 0;
         this.transitTime = 0;
-        this.attendingServer = server;
+        this.attendingServer = null;
         this.events = new LinkedList<Event>();
     }
 
@@ -42,23 +42,27 @@ public abstract class Entity {
         return classEntityId;
     }
 
+    public static int getClassId() {
+        return classEntityId;
+    }
+
     public int getId() {
         return this.id;
     }
 
-    public int getWaitingTime() {
+    public double getWaitingTime() {
         return waitingTime;
     }
 
-    public void setWaitingTime(int waitingTime) {
+    public void setWaitingTime(double waitingTime) {
         this.waitingTime = waitingTime;
     }
 
-    public int getTransitTime() {
+    public double getTransitTime() {
         return this.transitTime;
     }
 
-    public void setTransitTime(int transitTime) {
+    public void setTransitTime(double transitTime) {
         this.transitTime = transitTime;
     }
 

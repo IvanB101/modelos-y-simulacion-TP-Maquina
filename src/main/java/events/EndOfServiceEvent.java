@@ -20,27 +20,27 @@ public class EndOfServiceEvent extends Event {
     }
 
     @Override
-    public void planificate(List<Server>[]servers, FutureEventList fel) {
+    public void planificate(List<Server>servers, FutureEventList fel, Statistics statistics) {
         Entity entity = this.getEntity();
         Server server = entity.getAttendingServer();
         entity.setEvent(this);
 
-        double transit = this.getClock() - entity.getArrivalEvent().getClock();
-
-        if (transit > Statistics.getMaxTransitTime(entity.getClassEntityId())) {
-            Statistics.setMaxTransitTime(transit, entity.getClassEntityId());
+        //Adds the transit time of the entity to the statistics, which is calculated in the EndOfServiceBehavior
+        double transit = entity.getTransitTime();
+        if (transit > statistics.getMaxTransitTime(entity.getClassEntityId())) {
+            statistics.setMaxTransitTime(transit, entity.getClassEntityId());
         }
-        Statistics.accumulateTransitTime(transit, entity.getClassEntityId());
+        statistics.accumulateTransitTime(transit, entity.getClassEntityId());
+
+        //Adds the waiting time of the entity to the statistics, which is calculated in the EndOfServiceBehavior
+        double wait = entity.getWaitingTime();
+        if (wait > statistics.getMaxWaitingTime(entity.getClassEntityId())) {
+            statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
+        }
+        statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
 
         if (!server.getQueue().isEmpty()) {
-            double wait = this.getClock() - server.getQueue().checkNext().getArrivalEvent().getClock();
-            if (wait > Statistics.getMaxWaitingTime(entity.getClassEntityId())) {
-                Statistics.setMaxWaitingTime(wait, entity.getClassEntityId());
-            }
-
-            Statistics.accumulateWaitingTime(wait, entity.getClassEntityId());
-
-            fel.insert(this.getEventBehavior().nextEvent(this, server.getQueue().next(), null));
+            fel.insert(this.getEventBehavior().nextEvent(this, server.getQueue().next(), statistics));
         } else {
             server.setBusy(false);
             server.setIdleTimeStartMark(this.getClock());

@@ -1,24 +1,24 @@
 package behaviors;
 
 import events.Event;
-import resources.Server;
 import entities.Entity;
 import entities.HeavyAircraft;
 import entities.LightAircraft;
 import entities.MidAircraft;
 import utils.Randomizer;
+import utils.Statistics;
 import utils.CustomRandomizer;
 import utils.Distributions;
 import events.EndOfServiceEvent;
 
 public class EndOfServiceEventBehavior extends EventBehavior {
     private static EndOfServiceEventBehavior endOfServiceEventBehavior;
-    private final int[]valuesLight = {5, 10, 15};
-    private final double[]accProbabilityLight = {0.363, 0.838, 1};
-    private final int[]valuesHeavy = {40, 50};
-    private final double[]accProbabilityHeavy = {0.65, 1};
-    private final int[]valuesMid= {10,20};
-    private final int[]valuesMaintenance= {12*60,24*60};
+    private final int[] valuesLight = { 5, 10, 15 };
+    private final double[] accProbabilityLight = { 0.363, 0.838, 1 };
+    private final int[] valuesHeavy = { 40, 50 };
+    private final double[] accProbabilityHeavy = { 0.65, 1 };
+    private final int[] valuesMid = { 10, 20 };
+    private final int[] valuesMaintenance = { 12 * 60, 24 * 60 };
 
     private EndOfServiceEventBehavior(Randomizer randomizer) {
         super();
@@ -33,20 +33,32 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     }
 
     @Override
-    public Event nextEvent(Event actualEvent, Entity entity, Server server) {
+    public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
 
-        if (entity instanceof HeavyAircraft){
+        //Calculates and gives the waiting time for the entity
+        double waitingTime = actualEvent.getClock() - entity.getArrivalEvent().getClock();
+        entity.setWaitingTime(waitingTime);
+
+        if (entity instanceof HeavyAircraft) {
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
         } else if (entity instanceof MidAircraft) {
-            clock =Distributions.uniform(valuesMid[0],valuesMid[1]);
+            clock = Distributions.uniform(valuesMid[0], valuesMid[1]);
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            clock =Distributions.uniform(valuesMaintenance[0],valuesMaintenance[1]);
+            if (actualEvent.getClock() == 0) {
+                clock = 0;
+            } else {
+                clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
+            }
         }
 
-        // todo efecto
+        //Calculates and gives the transit time for the entity
+        double transitTime = waitingTime + clock;
+        entity.setTransitTime(transitTime);
+
+        entity.affectAirstrip();
         return new EndOfServiceEvent(actualEvent.getClock() + clock, entity);
     }
 }

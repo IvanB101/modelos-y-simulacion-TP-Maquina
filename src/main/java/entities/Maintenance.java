@@ -1,7 +1,6 @@
 
 package entities;
 
-import resources.Server;
 import utils.Statistics;
 
 public class Maintenance extends Entity {
@@ -9,10 +8,10 @@ public class Maintenance extends Entity {
 
     private int typeId;
 
-    public Maintenance(Server server) {
-        super(server);
-        Statistics.addIdCount(classEntityId);
-        this.typeId = Statistics.getIdCount(classEntityId);
+    public Maintenance(Statistics statistics) {
+        super(statistics);
+        statistics.addEntityIdCount(classEntityId);
+        this.typeId = statistics.getEntityIdCount(classEntityId);
     }
 
     @Override
@@ -25,12 +24,16 @@ public class Maintenance extends Entity {
         return classEntityId;
     }
 
+    public static int getClassId() {
+        return classEntityId;
+    }
+
     public int getTypeId() {
         return typeId;
     }
 
     @Override
-    public void affectAirstrip(){
-        this.getAttendingServer().addDurability((this.getAttendingServer().getMaxDurability()*0.15));
+    public void affectAirstrip() {
+        this.getAttendingServer().addDurability((this.getAttendingServer().getMaxDurability() * 0.15));
     }
 }

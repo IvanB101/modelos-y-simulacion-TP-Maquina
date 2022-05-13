@@ -18,27 +18,35 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
     }
 
     @Override
-    public Server selectServer(List<Server>[]servers, int classEntityId) {
-        int min = 0;
-        Server ret = servers[0].get(0);
-        
-        if (classEntityId == 4){
-            for (int i= 0; i<3; i++){
-                for (Server server : servers[i]) {
-                    if ((server.getDurability()/server.getMaxDurability() < ret.getDurability()/ret.getMaxDurability())) {
-                        ret = server;    
-                    }
+    public Server selectServer(List<Server> servers, int classEntityId) {
+        Server aux = servers.get(0), ret = servers.get(0);
+
+        if (classEntityId == 4) {
+            for (int index = 1; index < servers.size(); index++) {
+                if ((servers.get(index).getDurability() / servers.get(index).getMaxDurability() < ret.getDurability()
+                        / ret.getMaxDurability()) && servers.get(index).isMaintenance() == false) {
+                    ret = servers.get(index);
                 }
             }
-        } else{ 
-            for (int i = 1; i < servers[classEntityId-1].size(); i++) {
-                if ((servers[classEntityId-1].get(i).getQueue().size() > servers[classEntityId-1].get(min).getQueue().size())
-                        && !servers[classEntityId-1].get(i).isMaintenance()) {
-                    min = i;
+        } else {
+            for (int i = 0; i < servers.size(); i++) {
+                if (!(servers.get(i).isBusy()) && servers.get(i).getClassServerid() == classEntityId) {
+                    ret = servers.get(i);
+                    break;
+                }
+                if ((servers.get(i).getQueue().size() < ret.getQueue().size())
+                        && (servers.get(i).getClassServerid() == classEntityId)
+                        && servers.get(i).isMaintenance() == false) {
+                    ret = servers.get(i);
+                }
+                if ((servers.get(i).getQueue().size() < aux.getQueue().size())
+                        && servers.get(i).isMaintenance() == false) {
+                    aux = servers.get(i);
                 }
             }
-            ret = servers[classEntityId-1].get(min);
-            //TODO
+            if((ret == servers.get(0)) && (servers.get(0).getClassServerid() != classEntityId)) {
+                ret = aux;
+            }
         }
 
         return ret;

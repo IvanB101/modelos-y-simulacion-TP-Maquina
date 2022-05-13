@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
-import entities.Entity;
 import resources.Server;
 import utils.CustomRandomizer;
-import utils.Distributions;
+import utils.Statistics;
 import resources.HeavyAirstrip;
 import resources.LightAirstrip;
 import resources.MidAirstrip;
@@ -24,7 +23,6 @@ import events.Event;
 import resources.CustomQueue;
 import events.StopExecutionEvent;
 import policies.ServerSelectionPolicy;
-import resources.Queue;
 
 /**
  * Event oriented simulation of an airport
@@ -35,7 +33,8 @@ public class AirportSimulation implements Engine {
             "==============================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
-    private List<Server>[]servers;
+    private List<Server> servers;
+    private Statistics statistics;
 
     /**
      * Creates the execution engine for the airport simulator.
@@ -46,45 +45,35 @@ public class AirportSimulation implements Engine {
      * @param policy           The object that defines the airstrip selection policy
      *                         each time an arrival occurs.
      */
-    //TODO
-    public AirportSimulation(int airstripQuantity, double endTime, ServerSelectionPolicy policy, long seed) {
+    public AirportSimulation(int[] airstripQuantity, double endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
         }
 
+        this.statistics = new Statistics(servers);
+        statistics.setServerAmounts(airstripQuantity);
         this.endTime = endTime;
         this.fel = new FutureEventList();
-        this.servers = new List[3];
+        this.servers = new ArrayList<Server>();
 
-        for (int i = 0; i < servers.length; i++) {
-            servers[i] = new ArrayList<Server>();
+        for (int i = 0; i < statistics.getServerAmount(LightAircraft.getClassId()); i++) {
+            servers.add(new LightAirstrip(new CustomQueue(), statistics));
+        }
+        for (int i = 0; i < statistics.getServerAmount(MidAircraft.getClassId()); i++) {
+            servers.add(new MidAirstrip(new CustomQueue(), statistics));
+        }
+        for (int i = 0; i < statistics.getServerAmount(HeavyAircraft.getClassId()); i++) {
+            servers.add(new HeavyAirstrip(new CustomQueue(), statistics));
         }
 
-        for (int i = 0; i < 3; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[0].add(new LightAirstrip(queue));
-            queue.setAssignedServer(servers[0].get(i));
-        }
-
-        for (int i = 3; i < 7; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[1].add(new MidAirstrip(queue));
-            queue.setAssignedServer(servers[1].get(i));
-        }
-
-        for (int i = 7; i < 9; i++) {
-            Queue queue = new CustomQueue();
-            this.servers[2].add(new HeavyAirstrip(queue));
-            queue.setAssignedServer(servers[2].get(i));
-        }
+        this.statistics.setServers(servers);
 
         this.fel.insert(new StopExecutionEvent(endTime));
-        this.fel.insert(new ArrivalEvent(0, new LightAircraft(policy.selectServer(servers, 1)), policy));
-        this.fel.insert(new ArrivalEvent(0, new MidAircraft(policy.selectServer(servers, 2)), policy));
-        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(policy.selectServer(servers, 3)), policy));
-        this.fel.insert(new ArrivalEvent(5*1440, new Maintenance(policy.selectServer(servers, 1)), policy));
-
+        this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
+        this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
     }
 
     @Override
@@ -92,66 +81,86 @@ public class AirportSimulation implements Engine {
         Event event;
 
         while (!((event = fel.getImminent()) instanceof StopExecutionEvent)) {
-            event.planificate(servers, fel);
+            event.planificate(servers, fel, statistics);
         }
     }
 
-    //TODO
-    /*
     @Override
     public void generateReport() {
-        int inQueueAircrafts = 0;
-
-        for (int i= 0; i<9; i++){
-            for (Server server : servers[i]) {
-                inQueueAircrafts += server.getQueue().size();
-            }
-        }
-        int landings = Entity.getIdCount() - inQueueAircrafts - 1;
-
         DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
 
-        report += "Cantidad total de aterrizajes: " + landings + "\n" +
-                "Tiempo total de espera en cola: " + Entity.getTotalWaitingTime() + "\n" +
-                "Tiempo medio de espera en cola: " + format.format((double) Entity.getTotalWaitingTime() / landings)
-                + "\n" +
-                "Tiempo máximo de espera en cola: " + Entity.getMaxWaitingTime() + "\n" +
-                "Tiempo total de transito: " + Entity.getTotalTransitTime() + "\n" +
-                "Tiempo medio de transito: " + format.format((double) Entity.getTotalTransitTime() / landings) + "\n" +
-                "Tiempo máximo de transito: " + Entity.getMaxTransitTime() + "\n";
+        report += "Estadísticas disciminadas por tipo de Entidad:\n\n";
 
-        report += "Tiempo total de ocio:" + "\n";
+        String[] analytics = { "                                   ", "Cantidad total de aterrizajes:     ",
+                "Tiempo total de espera en cola:    ",
+                "Tiempo medio de espera en cola:    ", "Tiempo máximo de espera en cola:   ",
+                "Tiempo medio de transito:          ", "Tiempo máximo de transito:         " };
+
+        for (int i = 0; i < statistics.getEntityClassesNumber(); i++) {
+            int landings = (statistics.getEntityIdCount(i) - statistics.getInQueueAircrafts(i));
+
+            analytics[0] += String.format("%-21s", statistics.getClassEntityName(i));
+            analytics[1] += String.format("%-21s", format.format(landings));
+            analytics[2] += String.format("%-21s", format.format(statistics.getTotalWaitingTime(i)));
+            analytics[3] += String.format("%-21s", format.format(statistics.getTotalWaitingTime(i) / landings));
+            analytics[4] += String.format("%-21s", format.format(statistics.getMaxWaitingTime(i)));
+            analytics[5] += String.format("%-21s", format.format(statistics.getTotalTransitTime(i) / landings));
+            analytics[6] += String.format("%-21s", format.format(statistics.getMaxTransitTime(i)));
+        }
+        report += String.join("\n", analytics);
+
+        /*
+         * report += "\n\n\nEstadísticas por Servidor según Id\n\n";
+         * 
+         * String[]analytics2 = { "\n\n          ", "\n\nTipo ",
+         * "\n\nTiempo total de ocio  ", "\n\nTiempo máximo de ocio ",
+         * "Porcentaje de tiempo  \nde ocio ocio respecto \nal total: ",
+         * "Porcentaje del maximo \nde ocio respecto al    \ntiempo total de ocio:",
+         * "\nTamaño máximo de la \ncola de espera:" };
+         * for (int i = 0; i < statistics.getServerAmount(0); i++) {
+         * Server server = servers.get(i);
+         * 
+         * analytics2[0] += String.format("%-10s", "Server" + servers.get(i).getId());
+         * analytics2[1] += String.format("%-21s",
+         * statistics.getClassServerName(server.getClassServerid()));
+         * analytics2[2] += String.format("%-21s", server.getIdleTime());
+         * analytics2[3] += String.format("%-21s", server.getMaxIdleTime());
+         * analytics2[4] += String.format("%-21s",
+         * server.getMaxIdleTime()/server.getIdleTime());
+         * analytics2[5] += String.format("%-21s", server.getMaxIdleTime()/endTime);
+         * analytics2[6] += String.format("%-21s", server.getQueue().getMaxSize());
+         * }
+         * report += String.join("\n", analytics2);
+         */
         for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getIdleTime() + "\n";
+            report += "\n\nServer " + server.getId() + "   " + statistics.getClassServerName(server.getClassServerid())
+                    + "\n" +
+                    "Tiempo total de ocio: " + format.format(server.getIdleTime()) + "\n" +
+                    "Tiempo máximo de ocio: " + format.format(server.getMaxIdleTime()) + "\n" +
+                    "Porcentaje de tiempo de ocio respecto al total: "
+                    + dformat.format(server.getIdleTime() / endTime) + "\n" +
+                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
+                    + dformat.format(server.getMaxIdleTime() / server.getIdleTime()) + "\n" +
+                    "Tamaño máximo de la cola de espera: " + server.getQueue().getMaxSize() + "\n" +
+                    "Durabilidad: " + server.getDurability() + "\n\n";
         }
 
-        report += "Tiempo máximo de ocio: " + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getMaxIdleTime() + "\n";
+        report += "\nEstadísticas por Servidor discriminadas por tipo\n\n";
+        for (int i = 0; i < statistics.getServerClassesNumber(); i++) {
+            report += statistics.getClassServerName(i) + "\n" +
+                    "Tiempo total de ocio: " + format.format(statistics.getTotalIdleTime(i)) + "\n" +
+                    "Tiempo máximo de ocio: " + format.format(statistics.getMaxIdleTime(i)) + "\n" +
+                    "Porcentaje de tiempo de ocio ocio respecto al total: "
+                    + dformat.format(statistics.getTotalIdleTime(i) / (endTime * statistics.getServerAmount(i))) + "\n"
+                    +
+                    "Porcentaje del maximo de ocio respecto al tiempo total de ocio:"
+                    + dformat.format(statistics.getMaxIdleTime(i) / statistics.getTotalIdleTime(i)) + "\n" +
+                    "Tamaño máximo de la cola de espera: " + statistics.getMaxQueueSize(i) + "\n\n";
         }
 
-        report += "Porcentaje de ocio respecto al total de tiempo:" + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": "
-                    + dformat.format((server.getIdleTime()) / (double) this.getEndTime()) + "\n";
-        }
-
-        report += "Porcentaje del maximo de ocio respecto al tiempo total de ocio:" + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": "
-                    + dformat.format((server.getMaxIdleTime()) / (double) server.getIdleTime()) + "\n";
-        }
-
-        report += "Tamaño máximo de la cola de espera: " + "\n";
-        for (Server server : servers) {
-            report += "    Server " + server.getId() + ": " + server.getQueue().getMaxSize() + "\n";
-        }
-
-        report += "Semilla utilizada: " + CustomRandomizer.getSeed() + "\n";
+        report += "\nSemilla utilizada: " + CustomRandomizer.getSeed() + "\n";
     }
 
-    */
-    
     @Override
     public void saveReport() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SS");
@@ -176,12 +185,11 @@ public class AirportSimulation implements Engine {
         return endTime;
     }
 
-    public List<Server>[] getServers() {
+    public List<Server> getServers() {
         return this.servers;
     }
 
-    @Override
-    public void generateReport() {
-        // TODO borrar
+    public Statistics getStatistics() {
+        return statistics;
     }
 }

@@ -1,19 +1,18 @@
 package entities;
 
-import resources.Server;
 import utils.Distributions;
 import utils.Statistics;
 
 public class LightAircraft extends Entity {
     private static final int classEntityId = 1;
-    private static final int[]valuesLight= {0,-1};
+    private static final int[] valuesLight = { 0, -1 };
 
     private int typeId;
 
-    public LightAircraft(Server server) {
-        super(server);
-        Statistics.addIdCount(classEntityId);
-        this.typeId = Statistics.getIdCount(classEntityId);
+    public LightAircraft(Statistics statistics) {
+        super(statistics);
+        statistics.addEntityIdCount(classEntityId);
+        this.typeId = statistics.getEntityIdCount(classEntityId);
     }
 
     @Override
@@ -26,11 +25,16 @@ public class LightAircraft extends Entity {
         return classEntityId;
     }
 
+    public static int getClassId() {
+        return classEntityId;
+    }
+
     public int getTypeId() {
         return typeId;
     }
+
     @Override
-    public void affectAirstrip(){
-        this.getAttendingServer().addDurability(Distributions.uniform(valuesLight[0],valuesLight[1]));
+    public void affectAirstrip() {
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesLight[0], valuesLight[1]));
     }
 }

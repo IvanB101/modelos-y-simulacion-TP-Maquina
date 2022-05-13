@@ -1,6 +1,5 @@
 package entities;
 
-import resources.Server;
 import utils.Distributions;
 import utils.Statistics;
 
@@ -10,10 +9,10 @@ public class HeavyAircraft extends Entity {
 
     private int typeId;
 
-    public HeavyAircraft(Server server) {
-        super(server);
-        Statistics.addIdCount(classEntityId);
-        this.typeId = Statistics.getIdCount(classEntityId);
+    public HeavyAircraft(Statistics statistics) {
+        super(statistics);
+        statistics.addEntityIdCount(classEntityId);
+        this.typeId = statistics.getEntityIdCount(classEntityId);
     }
 
     @Override
@@ -26,9 +25,13 @@ public class HeavyAircraft extends Entity {
         return classEntityId;
     }
 
+    public static int getClassId() {
+        return classEntityId;
+    }
+
     @Override
     public void affectAirstrip() {
-        this.getAttendingServer().addDurability( Distributions.uniform(valuesHeavy[0], valuesHeavy[1]));
+        this.getAttendingServer().addDurability(Distributions.uniform(valuesHeavy[0], valuesHeavy[1]));
     }
 
     public int getTypeId() {

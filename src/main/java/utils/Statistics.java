@@ -1,53 +1,225 @@
 package utils;
 
+import java.util.List;
+
+import entities.Entity;
+import resources.Server;
+
 public class Statistics {
-    //Entity statistics
-    private static final int classesNumber = 5;
+    private List<Server> servers;
 
-    //private static String[]encabezado = {"General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft", "Maintenance"};
-    private static int[]idCount = new int[classesNumber];
-    private static double[]totalWaitingTime = new double[classesNumber];
-    private static double[]maxWaitingTime = new double[classesNumber];
-    private static double[]totalTransitTime = new double[classesNumber];
-    private static double[]maxTransitTime = new double[classesNumber];
+    // Entity statistics
+    private final int entityClassesNumber = 5;
+    private final String[] entityHeader = { "General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft",
+            "Maintenance" };
 
-    public static int getIdCount(int classEntityId) {
+    private int[] idCount = new int[entityClassesNumber];
+    private double[] totalWaitingTime = new double[entityClassesNumber];
+    private double[] maxWaitingTime = new double[entityClassesNumber];
+    private double[] totalTransitTime = new double[entityClassesNumber];
+    private double[] maxTransitTime = new double[entityClassesNumber];
+
+    public Statistics(List<Server> servers) {
+        this.servers = servers;
+    }
+
+    public int getEntityClassesNumber() {
+        return this.entityClassesNumber;
+    }
+
+    public String getClassEntityName(int classEntityId) {
+        return entityHeader[classEntityId];
+    }
+
+    public int getEntityIdCount(int classEntityId) {
         return idCount[classEntityId];
     }
 
-    public static void addIdCount(int classEntityId) {
-        Statistics.idCount[classEntityId]++;
+    public void addEntityIdCount(int classEntityId) {
+        this.idCount[classEntityId]++;
     }
 
-    public static double getTotalWaitingTime(int classEntityId) {
+    public double getTotalWaitingTime(int classEntityId) {
         return totalWaitingTime[classEntityId];
     }
 
-    public static void accumulateWaitingTime(double WaitingTime, int classEntityId) {
-        Statistics.totalWaitingTime[classEntityId] += WaitingTime;
+    public void accumulateWaitingTime(double WaitingTime, int classEntityId) {
+        this.totalWaitingTime[classEntityId] += WaitingTime;
+        this.totalWaitingTime[Entity.getClassId()] += WaitingTime;
     }
 
-    public static double getMaxWaitingTime(int classEntityId) {
-        return maxWaitingTime[classEntityId];
+    public double getMaxWaitingTime(int classEntityId) {
+        double ret = 0;
+
+        if (classEntityId == 0) {
+            for (int i = 1; i < entityClassesNumber; i++) {
+                if (ret < getMaxWaitingTime(i)) {
+                    ret = getMaxWaitingTime(i);
+                }
+            }
+        } else {
+            return maxWaitingTime[classEntityId];
+        }
+
+        return ret;
     }
 
-    public static void setMaxWaitingTime(double maxWaitingTime, int classEntityId) {
-        Statistics.maxWaitingTime[classEntityId] = maxWaitingTime;
+    public void setMaxWaitingTime(double maxWaitingTime, int classEntityId) {
+        this.maxWaitingTime[classEntityId] = maxWaitingTime;
     }
 
-    public static double getTotalTransitTime(int classEntityId) {
+    public double getTotalTransitTime(int classEntityId) {
         return totalTransitTime[classEntityId];
     }
 
-    public static void accumulateTransitTime(double TransitTime, int classEntityId) {
-        Statistics.totalTransitTime[classEntityId] += TransitTime;
+    public void accumulateTransitTime(double TransitTime, int classEntityId) {
+        this.totalTransitTime[classEntityId] += TransitTime;
+        this.totalTransitTime[Entity.getClassId()] += TransitTime;
     }
 
-    public static double getMaxTransitTime(int classEntityId) {
-        return maxTransitTime[classEntityId];
+    public double getMaxTransitTime(int classEntityId) {
+        double ret = 0;
+
+        if (classEntityId == 0) {
+            for (int i = 1; i < entityClassesNumber; i++) {
+                if (ret < getMaxTransitTime(i)) {
+                    ret = getMaxTransitTime(i);
+                }
+            }
+        } else {
+            return maxTransitTime[classEntityId];
+        }
+
+        return ret;
     }
 
-    public static void setMaxTransitTime(double maxTransitTime, int classEntityId) {
-        Statistics.maxTransitTime[classEntityId] = maxTransitTime;
+    public void setMaxTransitTime(double maxTransitTime, int classEntityId) {
+        this.maxTransitTime[classEntityId] = maxTransitTime;
+    }
+
+    public void setServers(List<Server> servers) {
+        this.servers = servers;
+    }
+
+    // Server statistics discriminated by class
+    private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
+    private final int serverClassesNumber = 4;
+    private int[] serverAmounts;// = { 9, 3, 4, 2 };
+    private int[] serverIdCount = new int[serverClassesNumber];
+
+    public int getServerIdCount(int classServerId) {
+        return serverIdCount[classServerId];
+    }
+
+    public void addServerIdCount(int classServerId) {
+        this.serverIdCount[classServerId]++;
+    }
+
+    public void setServerAmounts(int[] serverAmounts) {
+        this.serverAmounts = serverAmounts;
+    }
+
+    public int getServerAmount(int classServerId) {
+        return serverAmounts[classServerId];
+    }
+
+    public String getClassServerName(int classServerId) {
+        return serverHeader[classServerId];
+    }
+
+    public int getServerClassesNumber() {
+        return serverClassesNumber;
+    }
+
+    /**
+     * @return total idle time of all servers with the specified id
+     */
+    public double getTotalIdleTime(int classServerId) {
+        double totalIdleTime = 0.0;
+
+        if (classServerId == 0) {
+            for (Server server : servers) {
+                totalIdleTime += server.getIdleTime();
+            }
+        } else {
+            for (Server server : servers) {
+                if (server.getClassServerid() == classServerId) {
+                    totalIdleTime += server.getIdleTime();
+                }
+            }
+        }
+
+        return totalIdleTime;
+    }
+
+    /**
+     * @return max idle time of all servers with the specified id
+     */
+    public double getMaxIdleTime(int classServerId) {
+        double maxIdleTime = 0.0;
+
+        if (classServerId == 0) {
+            for (Server server : servers) {
+                if (server.getMaxIdleTime() > maxIdleTime) {
+                    maxIdleTime = server.getMaxIdleTime();
+                }
+            }
+        } else {
+            for (Server server : servers) {
+                if (server.getClassServerid() == classServerId) {
+                    if (server.getMaxIdleTime() > maxIdleTime) {
+                        maxIdleTime = server.getMaxIdleTime();
+                    }
+                }
+            }
+        }
+
+        return maxIdleTime;
+    }
+
+    /**
+     * @return max queue size of all servers with the specified id
+     */
+    public int getMaxQueueSize(int classServerId) {
+        int MaxQueueSize = 0;
+
+        if (classServerId == 0) {
+            for (Server server : servers) {
+                if (server.getQueue().getMaxSize() > MaxQueueSize) {
+                    MaxQueueSize = server.getQueue().getMaxSize();
+                }
+            }
+        } else {
+            for (Server server : servers) {
+                if (server.getClassServerid() == classServerId) {
+                    if (server.getQueue().getMaxSize() > MaxQueueSize) {
+                        MaxQueueSize = server.getQueue().getMaxSize();
+                    }
+                }
+            }
+        }
+
+        return MaxQueueSize;
+    }
+
+    /**
+     * @return in-Queue aircrafts of all servers with the specified id
+     */
+    public int getInQueueAircrafts(int classServerId) {
+        int inQueueAircrafts = 0;
+
+        if (classServerId == 0) {
+            for (Server server : servers) {
+                inQueueAircrafts = server.getQueue().size();
+            }
+        } else {
+            for (Server server : servers) {
+                if (server.getClassServerid() == classServerId) {
+                    inQueueAircrafts = server.getQueue().size();
+                }
+            }
+        }
+
+        return inQueueAircrafts;
     }
 }
