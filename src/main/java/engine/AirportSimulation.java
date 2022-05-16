@@ -106,7 +106,7 @@ public class AirportSimulation implements Engine {
             analytics[i] = String.format(f1, header[i]);
         }
 
-        for (int i = 0; i < statistics.getEntityClassesNumber(); i++) {
+        for (int i = 0; i < statistics.getEntityClassesNumber()-1; i++) {
             int landings = (statistics.getEntityIdCount(i) - statistics.getInQueueAircrafts(i));
 
             analytics[0] += String.format(f2, statistics.getClassEntityName(i));

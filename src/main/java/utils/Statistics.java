@@ -205,7 +205,6 @@ public class Statistics {
 
         return MaxQueueSize;
     }
-    // TODO InQueue Maintenance
     /**
      * @return in-Queue aircrafts of all servers with the specified id
      */

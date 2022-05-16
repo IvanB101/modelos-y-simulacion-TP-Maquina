@@ -1,7 +1,6 @@
 import engine.AirportSimulation;
 import engine.Engine;
 import policies.MultipleServerModelPolicy;
-import utils.Testecito;
 
 public class App {
     private static final int MIN_PER_DAY = 1440;
@@ -14,13 +13,6 @@ public class App {
         engine.execute();
         engine.generateReport();
         engine.showReport();
-        //engine.saveReport();*/
-
-        /*
-        int[][]configurations = new int[1][3];
-        int[]repetitions = new int[1];
-
-        Testecito test = new Testecito(configurations, repetitions, EXECUTION_TIME);
-        */
+        //engine.saveReport();
     }
 }
