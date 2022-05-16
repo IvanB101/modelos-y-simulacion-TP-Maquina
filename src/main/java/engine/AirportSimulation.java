@@ -138,13 +138,13 @@ public class AirportSimulation implements Engine {
             Server server = servers.get(i);
 
             analytics[i + 1] = String.format(formatanalytics, ("Server " + server.getId()),
-                    statistics.getClassServerName(server.getClassServerid()), format.format(server.getIdleTime()),
-                    format.format(server.getMaxIdleTime()),
-                    dformat.format(server.getMaxIdleTime() / server.getIdleTime()),
-                    dformat.format(server.getMaxIdleTime() / endTime), server.getQueue().getMaxSize(),
+                    statistics.getClassServerName(server.getClassServerid()), format.format(server.getMaxIdleTime()),
+                    format.format(server.getIdleTime()),
+                    dformat.format(server.getIdleTime() / endTime),
+                    dformat.format(server.getMaxIdleTime() / server.getIdleTime()), server.getQueue().getMaxSize(),
                     format.format(server.getDurability()));
         }
-        report += String.join("\n", analytics);
+        report += String.join("", analytics);
 
         report += "\n\nEstadísticas por Servidor discriminadas por tipo\n\n";
 

@@ -205,7 +205,7 @@ public class Statistics {
 
         return MaxQueueSize;
     }
-
+    // TODO InQueue Maintenance
     /**
      * @return in-Queue aircrafts of all servers with the specified id
      */
@@ -219,7 +219,7 @@ public class Statistics {
         } else {
             for (Server server : servers) {
                 if (server.getClassServerid() == classServerId) {
-                    inQueueAircrafts = server.getQueue().size();
+                    inQueueAircrafts += server.getQueue().size();
                 }
             }
         }
