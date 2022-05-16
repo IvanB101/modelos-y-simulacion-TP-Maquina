@@ -28,9 +28,9 @@ import policies.ServerSelectionPolicy;
  * Event oriented simulation of an airport
  */
 public class AirportSimulation implements Engine {
-    private String report = "==============================================================================================\n"
-            + "                                        R E P O R T                                           \n" +
-            "==============================================================================================\n\n";
+    private String report = "=========================================================================================================================================================\n"
+            + "                                                                        R E P O R T                                           \n" +
+            "=========================================================================================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
     private List<Server> servers;
