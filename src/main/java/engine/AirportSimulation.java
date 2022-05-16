@@ -75,7 +75,8 @@ public class AirportSimulation implements Engine {
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
-        this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
+        // First Maintenance will be in the fifth day whcich is its average
+        this.fel.insert(new ArrivalEvent(5*24*60, new Maintenance(statistics), policy));
     }
 
     @Override

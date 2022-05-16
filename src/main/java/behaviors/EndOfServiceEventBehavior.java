@@ -47,12 +47,7 @@ public class EndOfServiceEventBehavior extends EventBehavior {
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
-            if (actualEvent.getClock() == 0) {
-                //Control for the duration of the first maintenance to be 0
-                clock = 0;
-            } else {
-                clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
-            }
+            clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
         }
 
         //Calculates and gives the transit time for the entity

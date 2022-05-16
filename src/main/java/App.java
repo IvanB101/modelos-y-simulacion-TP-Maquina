@@ -13,6 +13,6 @@ public class App {
         engine.execute();
         engine.generateReport();
         engine.showReport();
-        //engine.saveReport();
+        engine.saveReport();
     }
 }

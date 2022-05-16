@@ -65,7 +65,7 @@ public class Statistics {
         double ret = 0;
 
         if (classEntityId == 0) {
-            for (int i = 1; i < entityClassesNumber; i++) {
+            for (int i = 1; i < entityClassesNumber-1; i++) {
                 if (ret < getMaxWaitingTime(i)) {
                     ret = getMaxWaitingTime(i);
                 }
@@ -94,7 +94,7 @@ public class Statistics {
         double ret = 0;
 
         if (classEntityId == 0) {
-            for (int i = 1; i < entityClassesNumber; i++) {
+            for (int i = 1; i < entityClassesNumber-1; i++) {
                 if (ret < getMaxTransitTime(i)) {
                     ret = getMaxTransitTime(i);
                 }
