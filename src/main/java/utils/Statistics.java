@@ -8,7 +8,7 @@ import resources.Server;
 public class Statistics {
     private List<Server> servers;
 
-    // Entity statistics
+    //Atributes for server statistics
     private final int entityClassesNumber = 5;
     private final String[] entityHeader = { "General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft",
             "Maintenance" };
@@ -19,8 +19,21 @@ public class Statistics {
     private double[] totalTransitTime = new double[entityClassesNumber];
     private double[] maxTransitTime = new double[entityClassesNumber];
 
-    public Statistics(List<Server> servers) {
+    //Atributes for server statistics
+    private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
+    private final int serverClassesNumber = 4;
+    private int[] serverAmounts;// = { 9, 3, 4, 2 };
+    private int[] serverIdCount = new int[serverClassesNumber];
+
+    // Entity statistics
+    public Statistics(List<Server> servers, int[]configuration) {
         this.servers = servers;
+        this.serverAmounts = new int[serverClassesNumber];
+        this.serverAmounts[0] = 0;
+        for (int i = 1; i < serverClassesNumber; i++) {
+            this.serverAmounts[i] = configuration[i-1];
+            this.serverAmounts[0] += configuration[i-1];
+        }
     }
 
     public int getEntityClassesNumber() {
@@ -102,21 +115,12 @@ public class Statistics {
     }
 
     // Server statistics discriminated by class
-    private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
-    private final int serverClassesNumber = 4;
-    private int[] serverAmounts;// = { 9, 3, 4, 2 };
-    private int[] serverIdCount = new int[serverClassesNumber];
-
     public int getServerIdCount(int classServerId) {
         return serverIdCount[classServerId];
     }
 
     public void addServerIdCount(int classServerId) {
         this.serverIdCount[classServerId]++;
-    }
-
-    public void setServerAmounts(int[] serverAmounts) {
-        this.serverAmounts = serverAmounts;
     }
 
     public int getServerAmount(int classServerId) {
@@ -201,7 +205,6 @@ public class Statistics {
 
         return MaxQueueSize;
     }
-
     /**
      * @return in-Queue aircrafts of all servers with the specified id
      */
@@ -215,7 +218,7 @@ public class Statistics {
         } else {
             for (Server server : servers) {
                 if (server.getClassServerid() == classServerId) {
-                    inQueueAircrafts = server.getQueue().size();
+                    inQueueAircrafts += server.getQueue().size();
                 }
             }
         }

@@ -48,6 +48,7 @@ public class EndOfServiceEventBehavior extends EventBehavior {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
         } else {
             if (actualEvent.getClock() == 0) {
+                //Control for the duration of the first maintenance to be 0
                 clock = 0;
             } else {
                 clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
