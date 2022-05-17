@@ -4,11 +4,21 @@ import java.util.List;
 
 import entities.Entity;
 import resources.Server;
+import utils.Data.EntityData;
+import utils.Data.ServerByTypeData;
+import utils.Data.ServerData;
+
+/**
+ * This class has 2 purposes:
+ * Centralize funtions concerning the accumulation and calculation of data and
+ * Recolect the statistics reffered to Entity in an object to avoid problems with
+ * previously statics Entity statistics
+ */
 
 public class Statistics {
     private List<Server> servers;
 
-    //Atributes for server statistics
+    // Atributes for server statistics
     private final int entityClassesNumber = 5;
     private final String[] entityHeader = { "General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft",
             "Maintenance" };
@@ -19,21 +29,31 @@ public class Statistics {
     private double[] totalTransitTime = new double[entityClassesNumber];
     private double[] maxTransitTime = new double[entityClassesNumber];
 
-    //Atributes for server statistics
+    // Atributes for server statistics
     private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
     private final int serverClassesNumber = 4;
-    private int[] serverAmounts;// = { 9, 3, 4, 2 };
+    private int[] serverAmounts;
     private int[] serverIdCount = new int[serverClassesNumber];
 
+    // Atributes for resumed data
+    private ServerData serverData;
+    private EntityData entityData;
+    private ServerByTypeData serverByTypeData;
+    private double endTime;
+
     // Entity statistics
-    public Statistics(List<Server> servers, int[]configuration) {
+    public Statistics(List<Server> servers, int[] configuration, double endTime) {
         this.servers = servers;
         this.serverAmounts = new int[serverClassesNumber];
         this.serverAmounts[0] = 0;
         for (int i = 1; i < serverClassesNumber; i++) {
-            this.serverAmounts[i] = configuration[i-1];
-            this.serverAmounts[0] += configuration[i-1];
+            this.serverAmounts[i] = configuration[i - 1];
+            this.serverAmounts[0] += configuration[i - 1];
         }
+        this.serverData = new ServerData(this);
+        this.entityData = new EntityData(this);
+        this.serverByTypeData = new ServerByTypeData(this);
+        this.endTime = endTime;
     }
 
     public int getEntityClassesNumber() {
@@ -112,6 +132,7 @@ public class Statistics {
 
     public void setServers(List<Server> servers) {
         this.servers = servers;
+        serverData.setRows(servers.size());
     }
 
     // Server statistics discriminated by class
@@ -225,5 +246,25 @@ public class Statistics {
         }
 
         return inQueueAircrafts;
+    }
+
+    public ServerData getServerData() {
+        return serverData;
+    }
+
+    public EntityData getEntityData() {
+        return entityData;
+    }
+
+    public ServerByTypeData getServerByTypeData() {
+        return serverByTypeData;
+    }
+
+    public List<Server> getServers() {
+        return servers;
+    }
+
+    public double getEndTime() {
+        return endTime;
     }
 }

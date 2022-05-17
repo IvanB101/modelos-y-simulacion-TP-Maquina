@@ -52,7 +52,7 @@ public class AirportSimulation implements Engine {
             CustomRandomizer.setSeed(seed);
         }
 
-        this.statistics = new Statistics(servers, configuration);
+        this.statistics = new Statistics(servers, configuration, endTime);
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();
@@ -91,60 +91,11 @@ public class AirportSimulation implements Engine {
     public void generateReport() {
         DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
 
-        report += "Estadísticas disciminadas por tipo de Entidad:\n\n";
+        report += statistics.getEntityData().toString();
 
-        String[] header = { "", "Cantidad total de aterrizajes:",
-                "Tiempo total de espera en cola:",
-                "Tiempo medio de espera en cola:", "Tiempo máximo de espera en cola:",
-                "Tiempo medio de transito:", "Tiempo máximo de transito:" };
+        report += statistics.getServerData().toString();
 
-        String[] analytics = new String[header.length];
-
-        String f1 = "%-35s", f2 = "%21s";
-
-        for (int i = 0; i < header.length; i++) {
-            analytics[i] = String.format(f1, header[i]);
-        }
-
-        for (int i = 0; i < statistics.getEntityClassesNumber(); i++) {
-            int landings = (statistics.getEntityIdCount(i) - statistics.getInQueueAircrafts(i));
-
-            analytics[0] += String.format(f2, statistics.getClassEntityName(i));
-            analytics[1] += String.format(f2, format.format(landings));
-            analytics[2] += String.format(f2, format.format(statistics.getTotalWaitingTime(i)));
-            analytics[3] += String.format(f2, format.format(statistics.getTotalWaitingTime(i) / landings));
-            analytics[4] += String.format(f2, format.format(statistics.getMaxWaitingTime(i)));
-            analytics[5] += String.format(f2, format.format(statistics.getTotalTransitTime(i) / landings));
-            analytics[6] += String.format(f2, format.format(statistics.getMaxTransitTime(i)));
-        }
-        report += String.join("\n", analytics);
-
-        report += "\n\n\nEstadísticas por Servidor según Id\n\n";
-
-        analytics = new String[servers.size() + 1];
-
-        String formatanalytics = "%-10s%18s%17s%16s%22s%24s%22s%12s\n";
-
-        analytics[0] = String.format(formatanalytics, "", "", "", "", "Porcentaje de tiempo",
-                "Porcentaje del maximo", "", "") +
-                String.format(formatanalytics, "", "", "Tiempo máximo", "Tiempo total",
-                        "de ocio respecto",
-                        "de ocio respecto al", "Tamaño máximo de la", "")
-                +
-                String.format(formatanalytics, "", "Tipo", "de ocio",
-                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durability");
-
-        for (int i = 0; i < statistics.getServerAmount(0); i++) {
-            Server server = servers.get(i);
-
-            analytics[i + 1] = String.format(formatanalytics, ("Server " + server.getId()),
-                    statistics.getClassServerName(server.getClassServerid()), format.format(server.getIdleTime()),
-                    format.format(server.getMaxIdleTime()),
-                    dformat.format(server.getMaxIdleTime() / server.getIdleTime()),
-                    dformat.format(server.getMaxIdleTime() / endTime), server.getQueue().getMaxSize(),
-                    format.format(server.getDurability()));
-        }
-        report += String.join("\n", analytics);
+        String[]analytics = new String[servers.size() + 1];
 
         report += "\n\nEstadísticas por Servidor discriminadas por tipo\n\n";
 
@@ -155,7 +106,7 @@ public class AirportSimulation implements Engine {
 
         analytics = new String[header2.length];
 
-        f1 = "%-65s";
+        String f1 = "%-65s", f2 = "%21s";
 
         for (int i = 0; i < header2.length; i++) {
             analytics[i] = String.format(f1, header2[i]);
