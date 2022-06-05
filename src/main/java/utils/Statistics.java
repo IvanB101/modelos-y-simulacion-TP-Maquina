@@ -2,6 +2,7 @@ package utils;
 
 import java.util.List;
 
+import javax.management.InvalidAttributeValueException;
 import entities.Entity;
 import resources.Server;
 import utils.Data.EntityData;
@@ -11,7 +12,8 @@ import utils.Data.ServerData;
 /**
  * This class has 2 purposes:
  * Centralize funtions concerning the accumulation and calculation of data and
- * Recolect the statistics reffered to Entity in an object to avoid problems with
+ * Recolect the statistics reffered to Entity in an object to avoid problems
+ * with
  * previously statics Entity statistics
  */
 
@@ -41,8 +43,12 @@ public class Statistics {
     private ServerByTypeData serverByTypeData;
     private double endTime;
 
+    // Atributes for Execution replication
+    private double alfa;
+    private double zAlfa;
+
     // Entity statistics
-    public Statistics(List<Server> servers, int[] configuration, double endTime) {
+    public Statistics(List<Server> servers, int[] configuration, double endTime, double alfa) throws InvalidAttributeValueException {
         this.servers = servers;
         this.serverAmounts = new int[serverClassesNumber];
         this.serverAmounts[0] = 0;
@@ -54,6 +60,16 @@ public class Statistics {
         this.entityData = new EntityData(this);
         this.serverByTypeData = new ServerByTypeData(this);
         this.endTime = endTime;
+        this.alfa = alfa;
+        setZAlfa();
+    }
+
+    private void setZAlfa() throws InvalidAttributeValueException {
+        if(alfa == 0.05) {
+            zAlfa = 1.96;
+        } else {
+            throw new InvalidAttributeValueException("El valor de alfa es inválido");
+        }
     }
 
     public int getEntityClassesNumber() {
@@ -154,6 +170,14 @@ public class Statistics {
 
     public int getServerClassesNumber() {
         return serverClassesNumber;
+    }
+
+    public double getAlfa() {
+        return alfa;
+    }
+
+    public double getZAlfa() {
+        return zAlfa;
     }
 
     /**

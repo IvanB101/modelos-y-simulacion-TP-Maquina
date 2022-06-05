@@ -6,6 +6,9 @@ import entities.Maintenance;
 import entities.MidAircraft;
 
 import java.util.List;
+
+import javax.management.InvalidAttributeValueException;
+
 import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -45,14 +48,15 @@ public class AirportSimulation implements Engine {
      *                      length).
      * @param policy        The object that defines the airstrip selection policy
      *                      each time an arrival occurs.
+     * @throws InvalidAttributeValueException
      */
-    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed) {
+    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed, double alfa) throws InvalidAttributeValueException {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
         }
 
-        this.statistics = new Statistics(servers, configuration, endTime);
+        this.statistics = new Statistics(servers, configuration, endTime, alfa);
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();

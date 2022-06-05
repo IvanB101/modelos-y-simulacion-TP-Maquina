@@ -12,7 +12,7 @@ public abstract class Data {
     }
 
     public double[][] getData() {
-        if(data == null) {
+        if (data == null) {
             calculateData();
         }
         return data;
@@ -20,7 +20,7 @@ public abstract class Data {
 
     public abstract void calculateData();
 
-    public void setData(double[][]data) {
+    public void setData(double[][] data) {
         this.data = data;
     }
 
@@ -32,12 +32,55 @@ public abstract class Data {
 
     public abstract String toString();
 
-    public double[][] mergeData(Data[]set, int fromC, int toC, int fromR, int toR) {
-        double[][]ret = new double[set[0].getData().length][set[0].getData()[0].length];
+    /**
+     * @param set   array of set to make interval estimators from0
+     * @return a string matrix with the with the interval estimator of the
+     *         corresponding position in the set data matrices
+     */
+    public String[][] mergeData(Data[] set) {
+        String[][] ret = new String[set[0].getData().length][set[0].getData()[0].length];
 
-        for (int i = 0; i < ret.length; i++) {
-            
+        for (int i = 0; i < set[0].getData().length; i++) {
+            for (int j = 0; j < set[0].getData()[0].length; j++) {
+                double[] temp = new double[set.length];
+
+                for (int k = 0; k < set.length; k++) {
+                    temp[k] = set[i].getData()[i][j];
+                }
+
+                ret[i][j] = getConfidenceInterval(temp);
+            }
         }
+
+        return ret;
+    }
+
+    /**
+     * @param data an array of doubles
+     * @return a string with the confidence interval taken from the values of the
+     *         array estimating poblational parameters with the average an variance
+     *         from data
+     */
+    public String getConfidenceInterval(double[] data) {
+        String ret;
+        int n = data.length;
+        double average = 0, deviation = 0, halfWidth;
+
+        for (int i = 0; i < n; i++) {
+            average += data[i];
+        }
+        average /= n;
+
+        for (int i = 0; i < n; i++) {
+            deviation += Math.pow(data[i] - average, 2);
+        }
+
+        deviation /= (n - 1);
+        deviation = Math.sqrt(deviation);
+
+        halfWidth = statistics.getZAlfa() * deviation / Math.sqrt(n);
+
+        ret = "(" + (average - halfWidth) + " - " + (average - halfWidth) + ")";
 
         return ret;
     }

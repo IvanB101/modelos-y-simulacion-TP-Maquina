@@ -4,14 +4,14 @@ import java.text.DecimalFormat;
 
 import utils.Statistics;
 
-public class EntityData extends Data{
+public class EntityData extends Data {
     private static final String[] header = { "", "Cantidad total de aterrizajes:",
-    "Tiempo total de espera en cola:",
-    "Tiempo medio de espera en cola:", "Tiempo máximo de espera en cola:",
-    "Tiempo medio de transito:", "Tiempo máximo de transito:" };
+            "Tiempo total de espera en cola:",
+            "Tiempo medio de espera en cola:", "Tiempo máximo de espera en cola:",
+            "Tiempo medio de transito:", "Tiempo máximo de transito:" };
     private static final int rows = header.length;
     private int columns;
-    private static DecimalFormat format = new DecimalFormat("#0.00"); 
+    private static DecimalFormat format = new DecimalFormat("#0.00");
 
     public EntityData(Statistics statistics) {
         super(statistics);
@@ -41,7 +41,7 @@ public class EntityData extends Data{
 
     @Override
     public String toString() {
-        double[][]data = super.getData();
+        double[][] data = super.getData();
 
         Statistics statistics = super.getStatistics();
 
@@ -56,7 +56,7 @@ public class EntityData extends Data{
         }
 
         for (int i = 0; i < columns; i++) {
-            analytics[0] += statistics.getClassEntityName((int)data[0][i]);
+            analytics[0] += statistics.getClassEntityName((int) data[0][i]);
             analytics[1] += String.format(f2, format.format(data[1][i]));
             analytics[2] += String.format(f2, format.format(data[2][i]));
             analytics[3] += String.format(f2, format.format(data[3][i]));
