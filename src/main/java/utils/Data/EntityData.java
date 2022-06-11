@@ -56,7 +56,7 @@ public class EntityData extends Data {
         }
 
         for (int i = 0; i < columns; i++) {
-            analytics[0] += statistics.getClassEntityName((int) data[0][i]);
+            analytics[0] += String.format(f2, statistics.getClassEntityName((int) data[0][i]));
             analytics[1] += String.format(f2, format.format(data[1][i]));
             analytics[2] += String.format(f2, format.format(data[2][i]));
             analytics[3] += String.format(f2, format.format(data[3][i]));
@@ -66,6 +66,7 @@ public class EntityData extends Data {
         }
 
         ret += String.join("\n", analytics);
+        ret += "\n\n\n";
 
         return ret;
     }

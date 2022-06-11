@@ -33,7 +33,7 @@ public class Statistics {
 
     // Atributes for server statistics
     private final String[] serverHeader = { "General", "Light Server", "Mid Weight Server", "Heavy Server" };
-    private final int serverClassesNumber = 4;
+    private final int serverClassesNumber = serverHeader.length;
     private int[] serverAmounts;
     private int[] serverIdCount = new int[serverClassesNumber];
 
@@ -51,7 +51,6 @@ public class Statistics {
     public Statistics(List<Server> servers, int[] configuration, double endTime, double alfa) throws InvalidAttributeValueException {
         this.servers = servers;
         this.serverAmounts = new int[serverClassesNumber];
-        this.serverAmounts[0] = 0;
         for (int i = 1; i < serverClassesNumber; i++) {
             this.serverAmounts[i] = configuration[i - 1];
             this.serverAmounts[0] += configuration[i - 1];

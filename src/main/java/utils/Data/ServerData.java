@@ -40,28 +40,32 @@ public class ServerData extends Data {
 
         DecimalFormat format = new DecimalFormat("#0.00"), dformat = new DecimalFormat("#0.00%");
 
-        String ret = "\n\n\nEstadísticas por Servidor según Id\n\n";
+        String ret = "Estadísticas por Servidor según Id\n\n";
 
         String[] analytics = new String[statistics.getServers().size() + 1];
 
-        String formatanalytics = "%-8s%18s%17s%16s%22s%24s%22s%12s\n";
+        String formatanalytics = "%-8s%18s%17s%16s%22s%24s%22s%12s";
 
         analytics[0] = String.format(formatanalytics, "", "", "", "", "Porcentaje de tiempo",
-                "Porcentaje del maximo", "", "") +
+                "Porcentaje del maximo", "", "\n") +
                 String.format(formatanalytics, "", "", "Tiempo máximo", "Tiempo total",
                         "de ocio respecto",
-                        "de ocio respecto al", "Tamaño máximo de la", "")
+                        "de ocio respecto al", "Tamaño máximo de la", "\n")
                 +
                 String.format(formatanalytics, "Server", "Tipo", "de ocio",
-                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durability");
+                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durabilidad");
 
         for (int i = 0; i < statistics.getServerAmount(0); i++) {
             analytics[i + 1] = String.format(formatanalytics, (int) data[i][0],
-                    statistics.getClassServerName((int) data[i][1]), format.format(data[i][2]),
-                    format.format(data[i][3]), dformat.format(data[i][4]), dformat.format(data[i][5]), (int) data[i][6],
+                    statistics.getClassServerName((int) data[i][1]),
+                    format.format(data[i][2]),
+                    format.format(data[i][3]), dformat.format(data[i][4]),
+                    dformat.format(data[i][5]),
+                    (int) data[i][6],
                     format.format(data[i][7]));
         }
         ret += String.join("\n", analytics);
+        ret += "\n\n\n";
 
         return ret;
     }
