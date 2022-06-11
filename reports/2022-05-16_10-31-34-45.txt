@@ -1,0 +1,37 @@
+=========================================================================================================================================================
+                                                                        R E P O R T                                           
+=========================================================================================================================================================
+
+Estadísticas disciminadas por tipo de Entidad:
+
+                                                 General       Light Aircraft  Mid Weight Aircraft       Heavy Aircraft
+Cantidad total de aterrizajes:                   3704,00              1201,00              1661,00               836,00
+Tiempo total de espera en cola:                 31374,23              3651,47              4317,62             23281,05
+Tiempo medio de espera en cola:                     8,47                 3,04                 2,60                27,85
+Tiempo máximo de espera en cola:                  111,70                65,70                68,88               111,70
+Tiempo medio de transito:                          29,29                12,10                17,56                71,20
+Tiempo máximo de transito:                        157,54                75,70                81,64               157,54
+
+
+Estadísticas por Servidor según Id
+
+                                                               Porcentaje de tiempo   Porcentaje del maximo                                  
+                                Tiempo máximo    Tiempo total      de ocio respecto     de ocio respecto al   Tamaño máximo de la            
+                        Tipo          de ocio         de ocio              al total    tiempo total de ocio        cola de espera  Durability
+Server 1        Light Server           281,52        27610,15                68,48%                   1,02%                     4      422,25
+Server 2   Mid Weight Server           181,15        21559,17                53,47%                   0,84%                     3     1216,42
+Server 3   Mid Weight Server           441,39        30951,39                76,76%                   1,43%                     6     1469,78
+Server 4        Heavy Server            47,37         3871,36                 9,60%                   1,22%                     3     2954,40
+
+
+Estadísticas por Servidor discriminadas por tipo
+
+                                                                               General         Light Server    Mid Weight Server         Heavy Server
+Tiempo total de ocio                                                          83992,07             27610,15             52510,56              3871,36
+Tiempo máximo de ocio                                                           441,39               281,52               441,39                47,37
+Porcentaje de tiempo de ocio respecto al total                                  52,08%               68,48%               65,12%                9,60%
+Porcentaje del maximo de ocio respecto al tiempo total de ocio                   0,53%                1,02%                0,84%                1,22%
+Tamaño máximo de la cola de espera                                                   6                    4                    6                    3
+
+
+Semilla utilizada: 1652707894270

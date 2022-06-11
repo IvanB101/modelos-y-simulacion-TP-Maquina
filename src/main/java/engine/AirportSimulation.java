@@ -29,9 +29,9 @@ import utils.Statistics;
  * Event oriented simulation of an airport
  */
 public class AirportSimulation implements Engine {
-    private String report = "==============================================================================================\n"
-            + "                                        R E P O R T                                           \n" +
-            "==============================================================================================\n\n";
+    private String report = "=========================================================================================================================================================\n"
+            + "                                                                        R E P O R T                                           \n" +
+            "=========================================================================================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
     private List<Server> servers;
@@ -82,7 +82,8 @@ public class AirportSimulation implements Engine {
         this.fel.insert(new ArrivalEvent(0, new LightAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
-        this.fel.insert(new ArrivalEvent(0, new Maintenance(statistics), policy));
+        // First Maintenance will be in the fifth day whcich is its average
+        this.fel.insert(new ArrivalEvent(5*24*60, new Maintenance(statistics), policy));
     }
 
     @Override
