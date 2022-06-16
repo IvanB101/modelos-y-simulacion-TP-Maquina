@@ -20,7 +20,6 @@ public abstract class Event {
     private static Comparator<Event> comparator = new Comparator<Event>() {
         int ret = 0;
 
-        //TODO
         @Override
         public int compare(Event t, Event t1) {
             if (t.getClock() < t1.getClock()) {
