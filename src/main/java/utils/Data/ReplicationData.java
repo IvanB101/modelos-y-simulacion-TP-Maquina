@@ -66,8 +66,6 @@ public class ReplicationData {
         // than 150 minutes
         valid = (data[0][4][1] + data[1][4][1]) <= maxValidWaitingTime;
 
-        System.out.println("Tiempo maximo de espera: " + data[0][4][1]);
-
         entitys = "Estadísticas disciminadas por tipo de Entidad:\n\n";
 
         String[] header = { "", "Cantidad total de aterrizajes:",
@@ -216,7 +214,7 @@ public class ReplicationData {
 
     public void generateResume() {
         double[] costo = getCost();
-        resume = "Resumen replicacion de ejecuciones:\n\n"
+        resume = "\n\nResumen replicacion de ejecuciones:\n\n"
                 + "El mayor tiempo de espera fue menor o igual a 150 min: " + valid + "\n\n"
                 + String.format("Costo: %s ± %s\n\n", format.format(costo[0]), format.format(costo[1]));
     }
