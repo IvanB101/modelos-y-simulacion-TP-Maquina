@@ -4,6 +4,7 @@ import events.Event;
 import entities.Entity;
 import entities.HeavyAircraft;
 import entities.LightAircraft;
+import entities.Maintenance;
 import entities.MidAircraft;
 import utils.Randomizer;
 import utils.Statistics;
@@ -34,11 +35,17 @@ public class EndOfServiceEventBehavior extends EventBehavior {
 
     @Override
     public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
-        double clock;
+        double clock = 0;
 
-        //Calculates and gives the waiting time for the entity
+        // Calculates and gives the waiting time for the entity
         double waitingTime = actualEvent.getClock() - entity.getArrivalEvent().getClock();
         entity.setWaitingTime(waitingTime);
+
+        //if (waitingTime > 150 || entity instanceof Maintenance) {
+        //    System.out.println("Entity: " + entity.toString());
+        //    System.out.println("Server: " + entity.getAttendingServer() + "\nEspera: " + waitingTime);
+        //    System.out.println("\n");
+        //}
 
         if (entity instanceof HeavyAircraft) {
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
@@ -46,16 +53,18 @@ public class EndOfServiceEventBehavior extends EventBehavior {
             clock = Distributions.uniform(valuesMid[0], valuesMid[1]);
         } else if (entity instanceof LightAircraft) {
             clock = Distributions.discreteEmpiric(valuesLight, accProbabilityLight);
-        } else {
+        } else if (entity instanceof Maintenance) {
             if (actualEvent.getClock() == 0) {
-                //Control for the duration of the first maintenance to be 0
+                // Control for the duration of the first maintenance to be 0
                 clock = 0;
             } else {
                 clock = Distributions.uniform(valuesMaintenance[0], valuesMaintenance[1]);
             }
+        } else {
+            System.out.println("Invalid entity type");
         }
 
-        //Calculates and gives the transit time for the entity
+        // Calculates and gives the transit time for the entity
         double transitTime = waitingTime + clock;
         entity.setTransitTime(transitTime);
 

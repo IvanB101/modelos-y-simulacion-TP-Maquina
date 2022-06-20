@@ -24,7 +24,7 @@ public class ServerData extends Data {
             data[i][2] = server.getIdleTime();
             data[i][3] = server.getMaxIdleTime();
             data[i][4] = server.getMaxIdleTime() / server.getIdleTime();
-            data[i][5] = server.getMaxIdleTime() / super.getStatistics().getEndTime();
+            data[i][5] = server.getIdleTime() / super.getStatistics().getEndTime();
             data[i][6] = server.getQueue().getMaxSize();
             data[i][7] = server.getDurability();
         }
@@ -48,12 +48,12 @@ public class ServerData extends Data {
 
         analytics[0] = String.format(formatanalytics, "", "", "", "", "Porcentaje de tiempo",
                 "Porcentaje del maximo", "", "\n") +
-                String.format(formatanalytics, "", "", "Tiempo máximo", "Tiempo total",
+                String.format(formatanalytics, "", "", "Tiempo total", "Tiempo máximo",
                         "de ocio respecto",
                         "de ocio respecto al", "Tamaño máximo de la", "\n")
                 +
                 String.format(formatanalytics, "Server", "Tipo", "de ocio",
-                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durabilidad");
+                        "de ocio", "tiempo total de ocio", "al total", "cola de espera", "Durabilidad");
 
         for (int i = 0; i < statistics.getServerAmount(0); i++) {
             analytics[i + 1] = String.format(formatanalytics, (int) data[i][0],

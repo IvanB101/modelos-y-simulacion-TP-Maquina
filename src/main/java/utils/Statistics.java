@@ -2,7 +2,6 @@ package utils;
 
 import java.util.List;
 
-import javax.management.InvalidAttributeValueException;
 import entities.Entity;
 import resources.Server;
 import utils.Data.EntityData;
@@ -24,7 +23,6 @@ public class Statistics {
     private final int entityClassesNumber = 5;
     private final String[] entityHeader = { "General", "Light Aircraft", "Mid Weight Aircraft", "Heavy Aircraft",
             "Maintenance" };
-
     private int[] idCount = new int[entityClassesNumber];
     private double[] totalWaitingTime = new double[entityClassesNumber];
     private double[] maxWaitingTime = new double[entityClassesNumber];
@@ -43,12 +41,11 @@ public class Statistics {
     private ServerByTypeData serverByTypeData;
     private double endTime;
 
-    // Atributes for Execution replication
-    private double alfa;
-    private double zAlfa;
+    // Atributes for Execution replications
+    private double cost;
 
     // Entity statistics
-    public Statistics(List<Server> servers, int[] configuration, double endTime, double alfa) throws InvalidAttributeValueException {
+    public Statistics(List<Server> servers, int[] configuration, double endTime) {
         this.servers = servers;
         this.serverAmounts = new int[serverClassesNumber];
         for (int i = 1; i < serverClassesNumber; i++) {
@@ -59,16 +56,7 @@ public class Statistics {
         this.entityData = new EntityData(this);
         this.serverByTypeData = new ServerByTypeData(this);
         this.endTime = endTime;
-        this.alfa = alfa;
-        setZAlfa();
-    }
-
-    private void setZAlfa() throws InvalidAttributeValueException {
-        if(alfa == 0.05) {
-            zAlfa = 1.96;
-        } else {
-            throw new InvalidAttributeValueException("El valor de alfa es inválido");
-        }
+        this.cost = 0;
     }
 
     public int getEntityClassesNumber() {
@@ -169,14 +157,6 @@ public class Statistics {
 
     public int getServerClassesNumber() {
         return serverClassesNumber;
-    }
-
-    public double getAlfa() {
-        return alfa;
-    }
-
-    public double getZAlfa() {
-        return zAlfa;
     }
 
     /**
@@ -289,5 +269,13 @@ public class Statistics {
 
     public double getEndTime() {
         return endTime;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void addCost(double cost) {
+        this.cost += cost;
     }
 }

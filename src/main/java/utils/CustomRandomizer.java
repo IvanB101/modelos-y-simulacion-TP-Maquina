@@ -24,7 +24,7 @@ public class CustomRandomizer implements Randomizer {
 
     public static CustomRandomizer getInstance() {
         if (CustomRandomizer.customRandomizer == null) {
-            if(seed == 0) {
+            if (seed == 0) {
                 CustomRandomizer.customRandomizer = new CustomRandomizer();
             } else {
                 CustomRandomizer.customRandomizer = new CustomRandomizer(seed);

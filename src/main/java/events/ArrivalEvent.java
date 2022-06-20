@@ -44,8 +44,9 @@ public class ArrivalEvent extends Event {
             server.setIdleTimeFinishMark(this.getClock());
         }
 
-        if (entity.getClassEntityId() == 4)
+        if (entity.getClassEntityId() == 4) {
             server.setMaintenance(true);
+        }
 
         fel.insert(this.getEventBehavior().nextEvent(this, entity, statistics));
     }

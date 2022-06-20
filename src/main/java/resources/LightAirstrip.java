@@ -17,15 +17,9 @@ public class LightAirstrip extends Server {
     public int getClassServerid() {
         return classServerId;
     }
-    
+
     public int getTypeId() {
         return typeId;
-    }
-
-    @Override
-    public String toString() {
-        return "Airstrip " + this.getId() + " -- busy? : " + this.isBusy() + " -- attending: " + this.getServedEntity()
-                + " >> light Airstrip";
     }
 
     @Override
