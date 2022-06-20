@@ -88,7 +88,7 @@ public class Statistics {
         double ret = 0;
 
         if (classEntityId == 0) {
-            for (int i = 1; i < entityClassesNumber; i++) {
+            for (int i = 1; i < entityClassesNumber-1; i++) {
                 if (ret < getMaxWaitingTime(i)) {
                     ret = getMaxWaitingTime(i);
                 }
@@ -117,7 +117,7 @@ public class Statistics {
         double ret = 0;
 
         if (classEntityId == 0) {
-            for (int i = 1; i < entityClassesNumber; i++) {
+            for (int i = 1; i < entityClassesNumber-1; i++) {
                 if (ret < getMaxTransitTime(i)) {
                     ret = getMaxTransitTime(i);
                 }
@@ -229,7 +229,6 @@ public class Statistics {
 
         return MaxQueueSize;
     }
-
     /**
      * @return in-Queue aircrafts of all servers with the specified id
      */
@@ -243,7 +242,7 @@ public class Statistics {
         } else {
             for (Server server : servers) {
                 if (server.getClassServerid() == classServerId) {
-                    inQueueAircrafts = server.getQueue().size();
+                    inQueueAircrafts += server.getQueue().size();
                 }
             }
         }

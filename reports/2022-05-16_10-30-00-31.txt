@@ -1,0 +1,63 @@
+=========================================================================================================================================================
+                                                                        R E P O R T                                           
+=========================================================================================================================================================
+
+Estadísticas disciminadas por tipo de Entidad:
+
+                                                 General       Light Aircraft  Mid Weight Aircraft       Heavy Aircraft
+Cantidad total de aterrizajes:                   3654,00              1184,00              1627,00               837,00
+Tiempo total de espera en cola:                     1,55                 0,00                 0,00                 0,00
+Tiempo medio de espera en cola:                     0,00                 0,00                 0,00                 0,00
+Tiempo máximo de espera en cola:                    0,00                 0,00                 0,00                 0,00
+Tiempo medio de transito:                          20,90                 8,94                15,02                43,64
+Tiempo máximo de transito:                         50,00                15,00                20,00                50,00
+
+
+Estadísticas por Servidor según Id
+
+                                                               Porcentaje de tiempo   Porcentaje del maximo                                  
+                                Tiempo máximo    Tiempo total      de ocio respecto     de ocio respecto al   Tamaño máximo de la            
+                        Tipo          de ocio         de ocio              al total    tiempo total de ocio        cola de espera  Durability
+Server 1        Light Server           372,29        31415,44                77,92%                   1,19%                     1      706,77
+Server 2        Light Server           855,47        38150,58                94,62%                   2,24%                     0      879,83
+Server 3        Light Server          3356,22        38110,11                94,52%                   8,81%                     0      976,56
+Server 4        Light Server         28624,12        33874,91                84,02%                  84,50%                     0      998,51
+Server 5        Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 6        Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 7        Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 8        Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 9        Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 10       Light Server             0,00            0,00                 0,00%                     NaN                     0     1000,00
+Server 11  Mid Weight Server           202,97        23794,34                59,01%                   0,85%                     1     2066,02
+Server 12  Mid Weight Server           464,73        32946,93                81,71%                   1,41%                     0     1811,17
+Server 13  Mid Weight Server          2030,38        37624,24                93,31%                   5,40%                     0     2557,50
+Server 14  Mid Weight Server          3427,51        39445,75                97,83%                   8,69%                     0     2891,91
+Server 15  Mid Weight Server         10034,00        37593,25                93,24%                  26,69%                     0     2967,49
+Server 16  Mid Weight Server         14433,43        27898,61                69,19%                  51,74%                     0     2988,81
+Server 17  Mid Weight Server             0,00            0,00                 0,00%                     NaN                     0     3000,00
+Server 18  Mid Weight Server             0,00            0,00                 0,00%                     NaN                     0     3000,00
+Server 19  Mid Weight Server             0,00            0,00                 0,00%                     NaN                     0     3000,00
+Server 20  Mid Weight Server             0,00            0,00                 0,00%                     NaN                     0     3000,00
+Server 21       Heavy Server            57,31        11016,26                27,32%                   0,52%                     0     2801,03
+Server 22       Heavy Server           621,71        32115,09                79,65%                   1,94%                     0     4171,22
+Server 23       Heavy Server         14873,22        15484,44                38,40%                  96,05%                     0     4974,28
+Server 24       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 25       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 26       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 27       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 28       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 29       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+Server 30       Heavy Server             0,00            0,00                 0,00%                     NaN                     0     5000,00
+
+
+Estadísticas por Servidor discriminadas por tipo
+
+                                                                               General         Light Server    Mid Weight Server         Heavy Server
+Tiempo total de ocio                                                         399469,94            141551,04            199303,12             58615,78
+Tiempo máximo de ocio                                                         28624,12             28624,12             14433,43             14873,22
+Porcentaje de tiempo de ocio respecto al total                                  33,02%               35,11%               49,43%               14,54%
+Porcentaje del maximo de ocio respecto al tiempo total de ocio                   7,17%               20,22%                7,24%               25,37%
+Tamaño máximo de la cola de espera                                                   1                    1                    1                    0
+
+
+Semilla utilizada: 1652707800131

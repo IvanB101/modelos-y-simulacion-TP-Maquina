@@ -23,10 +23,10 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
 
         // Selection for maintenance
         if (classEntityId == 4) {
-            for (int index = 1; index < servers.size(); index++) {
-                if ((servers.get(index).getDurability() / servers.get(index).getMaxDurability() < ret.getDurability()
-                        / ret.getMaxDurability()) && servers.get(index).isMaintenance() == false) {
-                    ret = servers.get(index);
+            for (int j = 0; j < servers.size(); j++) {
+                if ((servers.get(j).getDurability() / servers.get(j).getMaxDurability() < ret.getDurability()
+                        / ret.getMaxDurability()) && servers.get(j).isMaintenance() == false) {
+                    ret = servers.get(j);
                 }
             }
             // Selection for Airstrips
