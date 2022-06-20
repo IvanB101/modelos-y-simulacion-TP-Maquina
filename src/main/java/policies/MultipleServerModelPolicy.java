@@ -19,14 +19,9 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
 
     @Override
     public Server selectServer(List<Server> servers, int classEntityId) {
-        Server ret = servers.get(0);
-        boolean entre=false;
-        Server aux=null;
-        if (!(servers.get(0).isMaintenance())){
-            aux = servers.get(0);
-        } else{
-            aux=servers.get(1);
-        }
+        Server aux = servers.get(0), ret = servers.get(0);
+
+        // Selection for maintenance
         if (classEntityId == 4) {
             for (int j = 0; j < servers.size(); j++) {
                 if ((servers.get(j).getDurability() / servers.get(j).getMaxDurability() < ret.getDurability()
@@ -34,29 +29,32 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
                     ret = servers.get(j);
                 }
             }
+            // Selection for Airstrips
         } else {
             for (int i = 0; i < servers.size(); i++) {
-                if (!(servers.get(i).isBusy()) && servers.get(i).getClassServerid() == classEntityId) {
-                    ret = servers.get(i);
-                    entre=true;
-                    break;
+                // Free server case
+                if (!(servers.get(i).isBusy()) && (servers.get(i).getClassServerid() == classEntityId)) {
+                    return servers.get(i);
                 }
-                if (!(servers.get(i).isMaintenance())){
-                    if((servers.get(i).getClassServerid()) == classEntityId){
-                        if (!entre){
-                            ret=servers.get(i);
-                            entre=true;
-                        }
-                        if (servers.get(i).getQueue().size() < ret.getQueue().size()){
-                            ret = servers.get(i);
-                        }
-                    }
-                    if (servers.get(i).getQueue().size() < aux.getQueue().size()){
-                        aux = servers.get(i);
-                    }
+                // Server with smallest queue size and the airstrip respective type
+                if ((servers.get(i).getQueue().size() < ret.getQueue().size())
+                        && (servers.get(i).getClassServerid() == classEntityId)
+                        && (!(servers.get(i).isMaintenance()))) {
+                    ret = servers.get(i);
+                }
+                // Server with smallest queue size
+                if ((servers.get(i).getQueue().size() < aux.getQueue().size())
+                        && !(servers.get(i).isMaintenance())) {
+                    aux = servers.get(i);
+                }
+                // Case for inicial server in aux in maintenance
+                if(aux.isMaintenance() && !(servers.get(i).isMaintenance())) {
+                    aux = servers.get(i);
                 }
             }
-            if(!entre){
+            // Control for when no server from the aistrip type is available
+            if (((ret == servers.get(0)) && (servers.get(0).getClassServerid() != classEntityId))
+                    || ret.isMaintenance()) {
                 ret = aux;
             }
         }

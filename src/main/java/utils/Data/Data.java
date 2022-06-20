@@ -36,10 +36,10 @@ public abstract class Data {
      * @param set array of set to make interval estimators from, they must be of the
      *            same type
      * @return a double matrix with the last 2 indices corresponding to the indices
-     *         in the data matrix, for the first index 0 is average 1 is diference
-     *         with interval extremes
+     *         in the data matrix, for the first index 0 is average 1 is half the
+     *         width of the confidence interval
      */
-    public static double[][][] mergeData(Data[] set) {
+    public static double[][][] mergeData(Data[] set, double zAlfa) {
         double[][][] ret = new double[2][set[0].getData().length][set[0].getData()[0].length];
 
         for (int i = 0; i < set[0].getData().length; i++) {
@@ -50,7 +50,7 @@ public abstract class Data {
                     temp[k] = set[k].getData()[i][j];
                 }
 
-                double[] interval = getConfidenceInterval(temp, set[0].getStatistics().getAlfa());
+                double[] interval = getConfidenceInterval(temp, zAlfa);
 
                 ret[0][i][j] = interval[0];
                 ret[1][i][j] = interval[1];
@@ -62,11 +62,11 @@ public abstract class Data {
 
     /**
      * @param data an array of doubles
-     * @return a string with the confidence interval taken from the values of the
-     *         array estimating poblational parameters with the average an variance
-     *         from data
+     * @return an array with the first position corresponding to the average of the
+     *         values and the second one with half the width of the confidence
+     *         interval
      */
-    public static double[] getConfidenceInterval(double[] data, double alfa) {
+    public static double[] getConfidenceInterval(double[] data, double zAlfa) {
         int n = data.length;
         double average = 0, deviation = 0, halfWidth;
 
@@ -82,7 +82,7 @@ public abstract class Data {
         deviation /= (n - 1);
         deviation = Math.sqrt(deviation);
 
-        halfWidth = alfa * deviation / Math.sqrt(n);
+        halfWidth = zAlfa * deviation / Math.sqrt(n);
 
         double[] ret = { average, halfWidth };
 

@@ -4,7 +4,7 @@ public interface Engine {
     /**
      * This method initiates the execution of the simulation
      */
-    void execute();
+    public void execute();
 
     /**
      * This method generates a report, which is saved in the variable with the same

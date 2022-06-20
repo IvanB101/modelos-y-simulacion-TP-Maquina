@@ -25,6 +25,7 @@ public abstract class Server {
     // associations
     private Entity servedEntity;
     private Queue queue;
+    private Statistics statistics;
 
     public Server(Queue queue, Statistics statistics) {
         statistics.addServerIdCount(classServerId);
@@ -35,6 +36,8 @@ public abstract class Server {
         this.servedEntity = null;
         this.queue = queue;
         this.durability = getMaxDurability();
+        statistics.addCost(durability);
+        this.statistics = statistics;
     }
 
     public int getClassServerid() {
@@ -51,6 +54,9 @@ public abstract class Server {
 
     public void addDurability(double durability) {
         this.durability += durability % getMaxDurability();
+        if(durability > 0) {
+            statistics.addCost(durability);
+        }
     }
 
     public abstract int getMaxDurability();
@@ -91,9 +97,15 @@ public abstract class Server {
                 throw new Exception("desynchronized idle time marks");
             }
         } catch (Exception exception) {
-
             exception.printStackTrace();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Airstrip " + getId() + " -- busy? : " + isBusy() + " >> "
+                + statistics.getClassServerName(getClassServerid()) + "-- maintenance? : " + isMaintenance()
+                + "\n -- attending: " + getServedEntity();
     }
 
     public double getIdleTime() {

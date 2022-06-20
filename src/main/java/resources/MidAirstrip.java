@@ -23,12 +23,6 @@ public class MidAirstrip extends Server {
     }
 
     @Override
-    public String toString() {
-        return "Airstrip " + this.getId() + " -- busy? : " + this.isBusy() + " -- attending: " + this.getServedEntity()
-                + " >> mid weight Airstrip";
-    }
-
-    @Override
     public int getMaxDurability() {
         return maxDurability;
     }

@@ -15,7 +15,8 @@ public class EntityData extends Data {
 
     public EntityData(Statistics statistics) {
         super(statistics);
-        this.columns = statistics.getEntityClassesNumber();
+        // The -1 is for not taking Maintenance Entities into account
+        this.columns = statistics.getEntityClassesNumber() - 1;
     }
 
     @Override

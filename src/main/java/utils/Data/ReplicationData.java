@@ -3,22 +3,43 @@ package utils.Data;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 
+import javax.management.InvalidAttributeValueException;
 import utils.Statistics;
 
 public class ReplicationData {
     private static final DecimalFormat format = new DecimalFormat("#0.00");
     private static final DecimalFormat dformat = new DecimalFormat("#0.00%");
+    private static final double maxValidWaitingTime = 150;
 
     private LinkedList<Statistics> replications;
     private String entitys;
     private String servers;
     private String serversByType;
+    private double[] cost;
+    private boolean valid;
+    private String report;
+    private String resume;
+    private double alfa;
+    private double zAlfa;
 
-    public ReplicationData() {
+    public ReplicationData(double alfa) throws InvalidAttributeValueException {
         replications = new LinkedList<Statistics>();
         entitys = null;
         servers = null;
         serversByType = null;
+        cost = null;
+        valid = true;
+        report = null;
+        this.alfa = alfa;
+        setZAlfa();
+    }
+
+    private void setZAlfa() throws InvalidAttributeValueException {
+        if(alfa == 0.05) {
+            zAlfa = 1.96;
+        } else {
+            throw new InvalidAttributeValueException("El valor de alfa es inválido");
+        }
     }
 
     public void addReplication(Statistics statistics) {
@@ -39,7 +60,11 @@ public class ReplicationData {
             set[i] = replications.get(i).getEntityData();
         }
 
-        double[][][] data = Data.mergeData(set);
+        double[][][] data = Data.mergeData(set, zAlfa);
+
+        // Test for knowing if the confidence interval contains max waiting times larger
+        // than 150 minutes
+        valid = (data[0][4][1] + data[1][4][1]) <= maxValidWaitingTime;
 
         entitys = "Estadísticas disciminadas por tipo de Entidad:\n\n";
 
@@ -56,7 +81,7 @@ public class ReplicationData {
             analytics[i] = String.format(f1, header[i]);
         }
 
-        //The -1 is for not having the maintenance statistics
+        // The -1 is for not having the maintenance statistics
         for (int i = 0; i < replications.get(0).getEntityClassesNumber() - 1; i++) {
             analytics[0] += String.format(f2, replications.get(0).getClassEntityName(i));
             analytics[1] += String.format(f3, format.format(data[0][1][i]), format.format(data[1][1][i]));
@@ -72,9 +97,6 @@ public class ReplicationData {
     }
 
     public String getServers() {
-        if (servers == null)
-            setServers();
-
         return servers;
     }
 
@@ -85,7 +107,7 @@ public class ReplicationData {
             set[i] = replications.get(i).getServerData();
         }
 
-        double[][][] data = Data.mergeData(set);
+        double[][][] data = Data.mergeData(set, zAlfa);
 
         servers = "Estadísticas por Servidor según Id\n\n";
 
@@ -96,11 +118,12 @@ public class ReplicationData {
 
         analytics[0] = String.format(formatheader, "", "", "", "", "Porcentaje de tiempo",
                 "Porcentaje del maximo", "", "\n") +
-                String.format(formatheader, "", "", "Tiempo máximo", "Tiempo total",
+                String.format(formatheader, "", "", "Tiempo total", "Tiempo máximo",
                         "de ocio respecto",
-                        "de ocio respecto al", "Tamaño máximo de la", "\n") +
+                        "de ocio respecto al", "Tamaño máximo de la", "\n")
+                +
                 String.format(formatheader, "Server", "Tipo", "de ocio",
-                        "de ocio", "al total", "tiempo total de ocio", "cola de espera", "Durabilidad");
+                        "de ocio", "tiempo total de ocio", "al total", "cola de espera", "Durabilidad");
 
         for (int i = 0; i < analytics.length - 1; i++) {
             analytics[i + 1] = String.format(formatanalytics, (int) data[0][i][0],
@@ -109,7 +132,7 @@ public class ReplicationData {
                     format.format(data[0][i][3]), format.format(data[1][i][3]),
                     dformat.format(data[0][i][4]), dformat.format(data[1][i][4]),
                     dformat.format(data[0][i][5]), dformat.format(data[1][i][5]),
-                    (int) data[0][i][6], data[1][i][6],
+                    (int) data[0][i][6], format.format(data[1][i][6]),
                     format.format(data[0][i][7]), format.format(data[1][i][7]));
         }
 
@@ -118,9 +141,6 @@ public class ReplicationData {
     }
 
     public String getServersByType() {
-        if (serversByType == null)
-            setServersByType();
-
         return serversByType;
     }
 
@@ -131,7 +151,7 @@ public class ReplicationData {
             set[i] = replications.get(i).getServerByTypeData();
         }
 
-        double[][][] data = Data.mergeData(set);
+        double[][][] data = Data.mergeData(set, zAlfa);
 
         String[] header = {
                 "", "Tiempo total de ocio", "Tiempo máximo de ocio", "Porcentaje de tiempo de ocio respecto al total",
@@ -157,25 +177,57 @@ public class ReplicationData {
             analytics[2] += String.format(f3, format.format(data[0][2][i]), format.format(data[1][2][i]));
             analytics[3] += String.format(f3, dformat.format(data[0][3][i]), dformat.format(data[1][3][i]));
             analytics[4] += String.format(f3, dformat.format(data[0][4][i]), dformat.format(data[1][4][i]));
-            analytics[5] += String.format(f3, data[0][5][i], data[1][5][i]);
+            analytics[5] += String.format(f3, format.format(data[0][5][i]), format.format(data[1][5][i]));
         }
 
         serversByType += String.join("\n", analytics);
         serversByType += "\n\n\n";
     }
 
-    public void showReport() {
-        String report = "Reporte replicacion de ejecuciones:\n\n" + getEntitys() + getServers() + getServersByType();
-
-        System.out.println(report);
+    public double[] getCost() {
+        return cost;
     }
 
-    /**
-     * used if statistics of parcial number of repetitions is needed
-     */
-    public void actualiceData() {
+    public void setCost() {
+        double[] set = new double[replications.size()];
+
+        for (int i = 0; i < replications.size(); i++) {
+            set[i] = replications.get(i).getCost();
+        }
+
+        cost = Data.getConfidenceInterval(set, zAlfa);
+    }
+
+    public void generateReport() {
         setEntitys();
         setServers();
         setServersByType();
+        setCost();
+        generateResume();
+
+        report = resume + getEntitys() + getServers() + getServersByType();
+    }
+
+    public void showReport() {
+        System.out.println(report);
+    }
+
+    public void generateResume() {
+        double[] costo = getCost();
+        resume = "\n\nResumen replicacion de ejecuciones:\n\n"
+                + "El mayor tiempo de espera fue menor o igual a 150 min: " + valid + "\n\n"
+                + String.format("Costo: %s ± %s\n\n", format.format(costo[0]), format.format(costo[1]));
+    }
+
+    public void showResume() {
+        System.out.println(resume);
+    }
+
+    public double getAlfa() {
+        return alfa;
+    }
+
+    public double getZAlfa() {
+        return zAlfa;
     }
 }

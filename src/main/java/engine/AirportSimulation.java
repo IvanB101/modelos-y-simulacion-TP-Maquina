@@ -52,14 +52,14 @@ public class AirportSimulation implements Engine {
      *                      to contain the poblational statistic
      * @throws InvalidAttributeValueException
      */
-    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed, double alfa)
+    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed)
             throws InvalidAttributeValueException {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
         }
 
-        this.statistics = new Statistics(servers, configuration, endTime, alfa);
+        this.statistics = new Statistics(servers, configuration, endTime);
         this.endTime = endTime;
         this.fel = new FutureEventList();
         this.servers = new ArrayList<Server>();
