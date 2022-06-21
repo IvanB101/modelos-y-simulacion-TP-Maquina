@@ -41,12 +41,6 @@ public class EndOfServiceEventBehavior extends EventBehavior {
         double waitingTime = actualEvent.getClock() - entity.getArrivalEvent().getClock();
         entity.setWaitingTime(waitingTime);
 
-        //if (waitingTime > 150 || entity instanceof Maintenance) {
-        //    System.out.println("Entity: " + entity.toString());
-        //    System.out.println("Server: " + entity.getAttendingServer() + "\nEspera: " + waitingTime);
-        //    System.out.println("\n");
-        //}
-
         if (entity instanceof HeavyAircraft) {
             clock = Distributions.discreteEmpiric(valuesHeavy, accProbabilityHeavy);
         } else if (entity instanceof MidAircraft) {

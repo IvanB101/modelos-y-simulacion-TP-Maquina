@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.InvalidAttributeValueException;
-
 import entities.HeavyAircraft;
 import entities.LightAircraft;
 import entities.Maintenance;
@@ -30,7 +28,8 @@ import utils.Statistics;
  */
 public class AirportSimulation implements Engine {
     private String report = "=========================================================================================================================================================\n"
-            + "                                                                        R E P O R T                                           \n" +
+            + "                                                                        R E P O R T                                           \n"
+            +
             "=========================================================================================================================================================\n\n";
     private double endTime;
     private FutureEventList fel;
@@ -47,13 +46,8 @@ public class AirportSimulation implements Engine {
      * @param policy        The object that defines the airstrip selection policy
      *                      each time an arrival occurs.
      * @param seed          seed for the generation of random numbers
-     * @param alfa          value for the confidence interavals when doing
-     *                      replications, the is a (1-alfa) chance for the interval
-     *                      to contain the poblational statistic
-     * @throws InvalidAttributeValueException
      */
-    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed)
-            throws InvalidAttributeValueException {
+    public AirportSimulation(int[] configuration, double endTime, ServerSelectionPolicy policy, long seed) {
         // Option for simulation with a especific seed
         if (seed != 0) {
             CustomRandomizer.setSeed(seed);
@@ -83,7 +77,7 @@ public class AirportSimulation implements Engine {
         this.fel.insert(new ArrivalEvent(0, new MidAircraft(statistics), policy));
         this.fel.insert(new ArrivalEvent(0, new HeavyAircraft(statistics), policy));
         // First Maintenance will be in the fifth day whcich is its average
-        this.fel.insert(new ArrivalEvent(5*24*60, new Maintenance(statistics), policy));
+        this.fel.insert(new ArrivalEvent(5 * 24 * 60, new Maintenance(statistics), policy));
     }
 
     @Override

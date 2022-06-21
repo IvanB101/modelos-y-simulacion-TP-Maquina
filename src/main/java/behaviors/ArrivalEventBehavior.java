@@ -37,7 +37,6 @@ public class ArrivalEventBehavior extends EventBehavior {
     public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
         Entity nextEntity;
-
         // Changes the parameter in rush hour for the distributions
         int index = 0;
 
