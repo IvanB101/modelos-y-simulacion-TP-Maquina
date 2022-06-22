@@ -53,7 +53,7 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
                 if (!server.isMaintenance()) {
                     // Server with smallest queue size and the airstrip respective type
                     if ((server.getQueue().size() < ret.getQueue().size())
-                            && (servers.get(i).getClassServerid() == classEntityId)) {
+                            && (server.getClassServerid() == classEntityId)) {
                         ret = server;
                     }
                     // Server with smallest queue size
