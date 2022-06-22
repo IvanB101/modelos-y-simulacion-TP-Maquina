@@ -6,9 +6,7 @@ import entities.HeavyAircraft;
 import entities.LightAircraft;
 import entities.Maintenance;
 import entities.MidAircraft;
-import utils.Randomizer;
 import utils.Statistics;
-import utils.CustomRandomizer;
 import utils.Distributions;
 import events.EndOfServiceEvent;
 
@@ -21,14 +19,13 @@ public class EndOfServiceEventBehavior extends EventBehavior {
     private final int[] valuesMid = { 10, 20 };
     private final int[] valuesMaintenance = { 12 * 60, 24 * 60 };
 
-    private EndOfServiceEventBehavior(Randomizer randomizer) {
+    private EndOfServiceEventBehavior() {
         super();
     }
 
     public static EndOfServiceEventBehavior getInstance() {
         if (EndOfServiceEventBehavior.endOfServiceEventBehavior == null)
-            EndOfServiceEventBehavior.endOfServiceEventBehavior = new EndOfServiceEventBehavior(
-                    CustomRandomizer.getInstance());
+            EndOfServiceEventBehavior.endOfServiceEventBehavior = new EndOfServiceEventBehavior();
 
         return endOfServiceEventBehavior;
     }
