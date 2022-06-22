@@ -7,9 +7,7 @@ import entities.Maintenance;
 import entities.MidAircraft;
 import events.ArrivalEvent;
 import events.Event;
-import utils.CustomRandomizer;
 import utils.Distributions;
-import utils.Randomizer;
 import utils.Statistics;
 
 public class ArrivalEventBehavior extends EventBehavior {
@@ -22,13 +20,13 @@ public class ArrivalEventBehavior extends EventBehavior {
     private final double averageMaintenance = 5 * 24 * 60;
     private final double desviationMaintenance = 0.5 * 24 * 60;
 
-    private ArrivalEventBehavior(Randomizer randomizer) {
+    private ArrivalEventBehavior() {
         super();
     }
 
     public static ArrivalEventBehavior getInstance() {
         if (ArrivalEventBehavior.arrivalEventBehavior == null)
-            ArrivalEventBehavior.arrivalEventBehavior = new ArrivalEventBehavior(CustomRandomizer.getInstance());
+            ArrivalEventBehavior.arrivalEventBehavior = new ArrivalEventBehavior();
 
         return arrivalEventBehavior;
     }
@@ -37,7 +35,6 @@ public class ArrivalEventBehavior extends EventBehavior {
     public Event nextEvent(Event actualEvent, Entity entity, Statistics statistics) {
         double clock;
         Entity nextEntity;
-
         // Changes the parameter in rush hour for the distributions
         int index = 0;
 
