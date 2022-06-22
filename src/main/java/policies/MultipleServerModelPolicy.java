@@ -57,8 +57,7 @@ public class MultipleServerModelPolicy implements ServerSelectionPolicy {
                         ret = server;
                     }
                     // Server with smallest queue size
-                    if ((server.getQueue().size() < aux.getQueue().size())
-                            && !(server.isMaintenance())) {
+                    if ((server.getQueue().size() < aux.getQueue().size())) {
                         aux = server;
                     }
                 }
